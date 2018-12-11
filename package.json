@@ -9,6 +9,13 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
+    "lint:ts": "tslint --fix 'packages/**/*'"
+  },
+  "lint-staged": {
+    ".ts,.tsx": ["tslint --fix", "prettier --write", "git add"]
+  },
   "devDependencies": {
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
