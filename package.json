@@ -14,7 +14,11 @@
     "lint:ts": "tslint --fix 'packages/**/*'"
   },
   "lint-staged": {
-    ".ts,.tsx": ["tslint --fix", "prettier --write", "git add"]
+    ".ts,.tsx": [
+      "tslint --fix",
+      "prettier --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "husky": "^1.2.0",
@@ -24,5 +28,10 @@
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.17.0",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
+    "jest": "^23.6.0"
   }
 }
