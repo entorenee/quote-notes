@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
-    "lint:ts": "tslint --fix 'packages/**/*'"
+    "lint:ts": "tslint --fix 'packages/**/*'",
+    "ci": "yarn fmt:ts && yarn lint:ts"
   },
   "lint-staged": {
     ".ts,.tsx": [
@@ -27,6 +28,7 @@
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-config-prettier": "^1.17.0",
+    "tslint-react": "^3.6.0",
     "typescript": "^3.2.2"
   },
   "dependencies": {
