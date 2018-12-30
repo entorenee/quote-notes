@@ -1,11 +1,10 @@
-const express = require('express');
-const jwt = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
+import express from 'express'
+import jwt from 'express-jwt';
+import jwksRsa from 'jwks-rsa';
 require('dotenv').config();
 
 const app = express();
 const { AUTH0_DOMAIN } = process.env;
-console.log(AUTH0_DOMAIN);
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
