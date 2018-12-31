@@ -8,6 +8,7 @@
     ]
   },
   "rules": {
-    "import-name": "off"
+    "import-name": "off",
+    "object-literal-sort-keys": false
   }
 }

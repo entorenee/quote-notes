@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
-    "lint:ts": "tslint --fix 'packages/**/*'",
+    "lint:ts": "tslint --fix 'packages/**/*.{ts,tsx}'",
     "ci": "yarn fmt:ts && yarn lint:ts"
   },
   "lint-staged": {

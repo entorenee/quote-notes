@@ -1,13 +1,14 @@
-import express from 'express';
+/*tslint:disable no-var-requires */
 import { ApolloServer } from 'apollo-server-express';
-import jwt from 'express-jwt';
+import express from 'express';
+import expressJwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import mongoose from 'mongoose';
 
 require('dotenv').config();
 require('./data/models/user');
-import { typeDefs } from './data/schema/schema';
 import resolvers from './data/schema/resolvers';
+import { typeDefs } from './data/schema/schema';
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
 
@@ -18,15 +19,15 @@ mongoose.connect(
 );
 
 const checkJwt = jwt({
+  algorithms: ['RS256'],
   credentialsRequired: false,
+  issuer: `https://${AUTH0_DOMAIN}/`,
   secret: jwksRsa.expressJwtSecret({
     cache: true,
-    rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: `https://${AUTH0_DOMAIN}/.well-known/jwks.json`,
+    rateLimit: true,
   }),
-  issuer: `https://${AUTH0_DOMAIN}/`,
-  algorithms: ['RS256'],
 });
 
 const app = express();
@@ -44,6 +45,7 @@ server.applyMiddleware({ app });
 const port = 3000;
 
 app.listen({ port }, () => {
+  /*tslint:disable-next-line no-console */
   console.log(
     `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
   );
