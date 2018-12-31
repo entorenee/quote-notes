@@ -7,7 +7,7 @@
       "coverage/lcov-report/*.js"
     ]
   },
-  "rules": [
+  "rules": {
     "import-name": "off"
-  ]
+  }
 }
