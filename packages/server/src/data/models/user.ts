@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
+const { ObjectId } = Schema.Types;
 
 const userSchema = new Schema({
   createdAt: {
@@ -8,6 +9,12 @@ const userSchema = new Schema({
     default: Date.now(),
   },
   name: String,
+  notes: [
+    {
+      type: ObjectId,
+      ref: 'Note',
+    },
+  ],
   picture: String,
   sub: {
     type: String,
