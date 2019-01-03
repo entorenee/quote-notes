@@ -21,7 +21,7 @@ const noteSchema = new Schema({
     required: true,
   },
   page: Number,
-  quote: Number,
+  quote: String,
 });
 
 module.exports = mongoose.model('Note', noteSchema);
