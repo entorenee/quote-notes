@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-const noteSchema = new Schema({
+const entriesSchema = new Schema({
   book: {
     type: ObjectId,
     ref: 'Book',
@@ -24,4 +24,4 @@ const noteSchema = new Schema({
   quote: String,
 });
 
-module.exports = mongoose.model('Note', noteSchema);
+module.exports = mongoose.model('Entry', entriesSchema);

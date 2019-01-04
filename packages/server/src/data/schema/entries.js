@@ -1,10 +1,10 @@
 import { gql } from 'apollo-server-express';
 import mongoose from 'mongoose';
 
-const Note = mongoose.model('Note');
+const Entry = mongoose.model('Entry');
 
 export const typeDefs = gql`
-  type Note {
+  type Entry {
     id: ID!
     book: Book
     chapter: String
@@ -16,20 +16,20 @@ export const typeDefs = gql`
   }
 
   extend type User {
-    notes: [Note]
+    entries: [Entry]
   }
 `;
 
 export const resolvers = {
   User: {
-    notes: ({ notes }) =>
-      Note.find({
-        _id: { $in: notes },
+    entries: ({ entries }) =>
+      Entry.find({
+        _id: { $in: entries },
       }),
   },
-  Note: {
+  Entry: {
     __resolveObject(object) {
-      return Note.findById(object.id);
+      return Entry.findById(object.id);
     },
     book: ({ book }) => ({ id: book }),
     owner: ({ owner }) => ({ id: owner }),

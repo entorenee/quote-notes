@@ -9,10 +9,10 @@ const userSchema = new Schema({
     default: Date.now(),
   },
   name: String,
-  notes: [
+  entries: [
     {
       type: ObjectId,
-      ref: 'Note',
+      ref: 'Entry',
     },
   ],
   picture: String,

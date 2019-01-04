@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 require('dotenv').config();
 require('./data/models/author');
 require('./data/models/book');
-require('./data/models/note');
+require('./data/models/entry');
 require('./data/models/user');
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
@@ -37,7 +37,7 @@ app.use('*', checkJwt);
 const server = new ApolloServer({
   modules: [
     require('./data/schema/users'),
-    require('./data/schema/notes'),
+    require('./data/schema/entries'),
     require('./data/schema/authors'),
     require('./data/schema/books'),
   ],
