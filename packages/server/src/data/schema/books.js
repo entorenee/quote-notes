@@ -15,9 +15,18 @@ export const typeDefs = gql`
   extend type Author {
     booksWritten: [Book]
   }
+
+  extend type Query {
+    allBooks: [Book]
+    book(id: ID!): Book
+  }
 `;
 
 export const resolvers = {
+  Query: {
+    allBooks: () => Book.find({}),
+    book: (_, { id }) => Book.findById(id),
+  },
   Author: {
     booksWritten: ({ booksWritten }) =>
       Book.find({

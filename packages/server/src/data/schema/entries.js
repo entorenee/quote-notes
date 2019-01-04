@@ -18,9 +18,16 @@ export const typeDefs = gql`
   extend type User {
     entries: [Entry]
   }
+
+  extend type Query {
+    entry(id: ID!): Entry
+  }
 `;
 
 export const resolvers = {
+  Query: {
+    entry: (_, { id }) => Entry.findById(id),
+  },
   User: {
     entries: ({ entries }) =>
       Entry.find({

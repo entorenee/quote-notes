@@ -12,9 +12,18 @@ export const typeDefs = gql`
   extend type Book {
     authors: [Author]
   }
+
+  extend type Query {
+    allAuthors: [Author]
+    author(id: ID!): Author
+  }
 `;
 
 export const resolvers = {
+  Query: {
+    allAuthors: () => Author.find({}),
+    author: (_, { id }) => Author.findById(id),
+  },
   Author: {
     __resolveObject(object) {
       return Author.findById(object.id);

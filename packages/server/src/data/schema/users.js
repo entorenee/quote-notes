@@ -22,6 +22,7 @@ export const typeDefs = gql`
 
   extend type Query {
     me: User
+    allEntries: [Entry]
   }
 
   extend type Mutation {
@@ -43,6 +44,15 @@ export const resolvers = {
       }
 
       return null;
+    },
+    allEntries: async (_, args, { user }) => {
+      if (!user) return null;
+
+      const data = await User.findOne({ sub: user.sub }, 'entries')
+        .populate('entries')
+        .exec();
+
+      return data ? data.entries : null;
     },
   },
   Mutation: {
