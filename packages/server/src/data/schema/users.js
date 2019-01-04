@@ -8,6 +8,7 @@ export const typeDefs = gql`
   scalar DateTime
 
   type User {
+    id: ID!
     name: String
     picture: String
     sub: String!

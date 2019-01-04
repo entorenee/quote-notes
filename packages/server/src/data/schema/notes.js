@@ -5,6 +5,7 @@ const Note = mongoose.model('Note');
 
 export const typeDefs = gql`
   type Note {
+    id: ID!
     book: Book
     chapter: String
     createdAt: DateTime!

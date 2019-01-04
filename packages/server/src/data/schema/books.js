@@ -5,6 +5,7 @@ const Book = mongoose.model('Book');
 
 export const typeDefs = gql`
   type Book {
+    id: ID!
     isbn: String
     publishedDate: DateTime
     synopsis: String

@@ -5,7 +5,7 @@ const Author = mongoose.model('Author');
 
 export const typeDefs = gql`
   type Author {
-    id: ID
+    id: ID!
     name: String!
   }
 
