@@ -10,8 +10,6 @@ require('./data/models/author');
 require('./data/models/book');
 require('./data/models/note');
 require('./data/models/user');
-import resolvers from './data/schema/resolvers';
-import { typeDefs } from './data/schema/schema';
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
 
@@ -37,8 +35,12 @@ const app = express();
 app.use('*', checkJwt);
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  modules: [
+    require('./data/schema/users'),
+    require('./data/schema/notes'),
+    require('./data/schema/authors'),
+    require('./data/schema/books'),
+  ],
   context: async ({ req }: any) => {
     return { user: req.user };
   },
