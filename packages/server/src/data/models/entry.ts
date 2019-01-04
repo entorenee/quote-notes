@@ -24,4 +24,4 @@ const entriesSchema = new Schema({
   quote: String,
 });
 
-module.exports = mongoose.model('Entry', entriesSchema);
+module.exports = mongoose.model('Entry', entriesSchema, 'entries');
