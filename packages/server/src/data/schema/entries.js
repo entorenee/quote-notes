@@ -1,8 +1,8 @@
 import { gql } from 'apollo-server-express';
 import mongoose from 'mongoose';
+import { updateFieldId } from '../user-methods';
 
 const Entry = mongoose.model('Entry');
-const User = mongoose.model('User');
 
 export const typeDefs = gql`
   type Entry {
@@ -55,10 +55,7 @@ export const resolvers = {
     createEntry: async (_, { input }, { user }) => {
       if (!user) return null;
 
-      const userObj = await User.findOne({ sub: user.sub });
-      if (!userObj) return null;
-
-      const { id: owner } = userObj;
+      const { id: owner } = user;
       const data = {
         ...input,
         owner,
@@ -67,21 +64,19 @@ export const resolvers = {
       const entry = new Entry(data);
       const newEntry = await entry.save();
       const { id: entryId } = newEntry;
-      await User.findByIdAndUpdate(
-        owner,
-        { $push: { entries: entryId } },
-        { new: true },
-      );
+      await updateFieldId({
+        objectId: owner,
+        field: 'entries',
+        operator: '$push',
+        value: entryId,
+      });
 
       return newEntry;
     },
     updateEntry: async (_, { input }, { user }) => {
       if (!user) return null;
 
-      const userObj = await User.findOne({ sub: user.sub });
-      if (!userObj) return null;
-
-      const { id: owner } = userObj;
+      const { id: owner } = user;
       return Entry.findOneAndUpdate({ _id: input.id, owner }, input, {
         new: true,
       });
@@ -89,16 +84,14 @@ export const resolvers = {
     removeEntry: async (_, { id }, { user }) => {
       if (!user) return null;
 
-      const userObj = await User.findOne({ sub: user.sub });
-      if (!userObj) return null;
+      const { id: owner } = user;
 
-      const { id: owner } = userObj;
-
-      await User.findByIdAndUpdate(
-        owner,
-        { $pull: { entries: id } },
-        { new: true },
-      );
+      await updateFieldId({
+        objectId: owner,
+        field: 'entries',
+        operator: '$pull',
+        value: id,
+      });
 
       const removed = await Entry.findOneAndRemove({ _id: id, owner });
       return removed.id;
