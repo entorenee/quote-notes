@@ -9,6 +9,8 @@
   },
   "rules": {
     "import-name": false,
-    "object-literal-sort-keys": false
+    "interface-name": false,
+    "object-literal-sort-keys": false,
+    "variable-name": [true, "ban-keywords", "allow-pascal-case"]
   }
 }
