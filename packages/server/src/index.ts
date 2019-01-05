@@ -1,6 +1,6 @@
 /*tslint:disable no-var-requires */
 import { ApolloServer } from 'apollo-server-express';
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import mongoose from 'mongoose';
@@ -12,6 +12,7 @@ require('./data/models/entry');
 require('./data/models/user');
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
+const User = mongoose.model('User');
 
 mongoose.set('useFindAndModify', false);
 mongoose.connect(
@@ -31,8 +32,23 @@ const checkJwt = jwt({
   }),
 });
 
+const fetchUserId = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user || !req.user.sub) return next();
+
+  const user = await User.findOne({ sub: req.user.sub });
+
+  if (user) {
+    const { id } = user;
+    req.user = {
+      ...req.user,
+      id,
+    };
+  }
+  next();
+};
+
 const app = express();
-app.use('*', checkJwt);
+app.use('*', checkJwt, fetchUserId);
 
 const server = new ApolloServer({
   modules: [
