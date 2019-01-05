@@ -7,12 +7,18 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["es2018"],
+    "lib": ["esnext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve"
-  }
+  },
+  "include": [
+    "packages/server"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
