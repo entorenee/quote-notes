@@ -11,7 +11,9 @@
   ],
   "scripts": {
     "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
+    "fmt:js": "prettier --write 'packages/**/*.{js,jsx}'",
     "lint:ts": "tslint --fix 'packages/**/*.{ts,tsx}'",
+    "lint:js": "eslint --fix 'packages/**/*.{js,jsx}'",
     "ci": "yarn fmt:ts && yarn lint:ts"
   },
   "lint-staged": {
@@ -19,9 +21,23 @@
       "tslint --fix",
       "prettier --write",
       "git add"
+    ],
+    ".js,.jsx": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
     ]
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.1.2",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.3",
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
     "prettier": "^1.15.3",

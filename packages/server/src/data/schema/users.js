@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express';
 import mongoose from 'mongoose';
 
 import dateTime from './custom-scalars/date-time';
+
 const User = mongoose.model('User');
 
 export const typeDefs = gql`
