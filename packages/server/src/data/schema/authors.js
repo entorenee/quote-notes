@@ -10,6 +10,9 @@ export const typeDefs = gql`
   }
 
   extend type Book {
+    """
+    A list of authors for a given book
+    """
     authors: [Author]
   }
 

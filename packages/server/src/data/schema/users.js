@@ -10,8 +10,17 @@ export const typeDefs = gql`
 
   type User {
     id: ID!
+    """
+    User's name from oAuth provider
+    """
     name: String
+    """
+    User's profile image from oAuth provider
+    """
     picture: String
+    """
+    Unique oAuth identifier
+    """
     sub: String!
   }
 

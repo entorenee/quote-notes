@@ -8,11 +8,26 @@ export const typeDefs = gql`
   type Entry {
     id: ID!
     book: Book
+    """
+    Chapter relating to the note
+    """
     chapter: String
+    """
+    Database generated timestamp of entry creation
+    """
     createdAt: DateTime!
+    """
+    User supplied notes for the entry
+    """
     notes: String
-    owner: User
+    owner: User!
+    """
+    Page the notes are referencing
+    """
     page: Int
+    """
+    Quoted text from the book
+    """
     quote: String
   }
 

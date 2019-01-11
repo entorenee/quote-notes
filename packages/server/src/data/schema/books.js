@@ -6,13 +6,28 @@ const Book = mongoose.model('Book');
 export const typeDefs = gql`
   type Book {
     id: ID!
+    """
+    ISBN number of the book
+    """
     isbn: String
+    """
+    Date of first publication
+    """
     publishedDate: DateTime
+    """
+    Synopsis of the book
+    """
     synopsis: String
+    """
+    Book's title
+    """
     title: String!
   }
 
   extend type Author {
+    """
+    Other books written by the author and also stored in the database
+    """
     booksWritten: [Book]
   }
 
