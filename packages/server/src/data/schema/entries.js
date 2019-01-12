@@ -7,7 +7,7 @@ const Entry = mongoose.model('Entry');
 export const typeDefs = gql`
   type Entry {
     id: ID!
-    book: Book
+    book: Book!
     """
     Chapter relating to the note
     """

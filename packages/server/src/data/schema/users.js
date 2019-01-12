@@ -36,7 +36,7 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    updateUser(user: UserInput): User
+    updateUser(user: UserInput!): User
   }
 `;
 
