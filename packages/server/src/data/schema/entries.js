@@ -52,6 +52,7 @@ export const typeDefs = gql`
   }
 
   extend type Query {
+    allEntries: [Entry]
     entry(id: ID!): Entry
   }
 
@@ -64,6 +65,13 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
+    allEntries: async (_, args, { user }) => {
+      if (!user) return null;
+
+      const data = await Entry.find({ owner: user.id });
+
+      return data.length ? data : null;
+    },
     entry: (_, { id }) => Entry.findById(id),
   },
   Mutation: {
