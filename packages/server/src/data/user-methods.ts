@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { User } from './models/user';
+import * as mongoose from 'mongoose';
+import { UserModel } from './models/user';
 
 const User = mongoose.model('User');
 
@@ -15,7 +15,7 @@ interface UpdateField {
   value: string;
 }
 
-export const updateFieldId = (updater: UpdateField): any => {
+export const updateFieldId = (updater: UpdateField) => {
   const { objectId, field, operator, value } = updater;
 
   return User.findByIdAndUpdate(
