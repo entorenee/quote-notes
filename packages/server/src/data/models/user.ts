@@ -1,29 +1,36 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
-export interface User {
+export interface UserModel extends mongoose.Document {
   id: string;
+  books: string[];
   createdAt: Date;
-  name: string;
   entries: string[];
-  picture: string;
+  name?: string;
+  picture?: string;
   sub: string;
 }
 
 const userSchema = new Schema({
+  books: [
+    {
+      type: ObjectId,
+      ref: 'Book',
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now(),
   },
-  name: String,
   entries: [
     {
       type: ObjectId,
       ref: 'Entry',
     },
   ],
+  name: String,
   picture: String,
   sub: {
     type: String,

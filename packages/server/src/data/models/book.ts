@@ -1,7 +1,16 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
+
+export interface BookModel extends mongoose.Document {
+  id: string;
+  authors: string[];
+  isbn: string;
+  publishedDate?: Date;
+  synopsis?: string;
+  title: string;
+}
 
 const bookSchema = new Schema({
   authors: [

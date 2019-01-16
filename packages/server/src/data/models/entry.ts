@@ -1,7 +1,18 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
+
+export interface UserModel extends mongoose.Document {
+  id: string;
+  book: string;
+  chapter: string;
+  createdAt: Date;
+  notes: string;
+  owner: string;
+  page: number;
+  quote: string;
+}
 
 const entriesSchema = new Schema({
   book: {
