@@ -51,6 +51,13 @@ export const typeDefs = gql`
     entries: [Entry]
   }
 
+  extend type Book {
+    """
+    A user's entries on the given Book
+    """
+    entries: [Entry]
+  }
+
   extend type Query {
     allEntries: [Entry]
     entry(id: ID!): Entry
@@ -125,6 +132,10 @@ export const resolvers = {
       Entry.find({
         _id: { $in: entries },
       }),
+  },
+  Book: {
+    entries: ({ id }, args, { user }) =>
+      Entry.find({ book: id, owner: user.id }),
   },
   Entry: {
     __resolveObject(object) {

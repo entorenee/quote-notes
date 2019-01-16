@@ -24,6 +24,13 @@ export const typeDefs = gql`
     title: String!
   }
 
+  extend type User {
+    """
+    A user's collection of books to take notes on
+    """
+    books: [Book]
+  }
+
   extend type Author {
     """
     Other books written by the author and also stored in the database
@@ -41,6 +48,12 @@ export const resolvers = {
   Query: {
     allBooks: () => Book.find({}),
     book: (_, { id }) => Book.findById(id),
+  },
+  User: {
+    books: ({ books }) =>
+      Book.find({
+        _id: { $in: books },
+      }),
   },
   Author: {
     booksWritten: ({ booksWritten }) =>
