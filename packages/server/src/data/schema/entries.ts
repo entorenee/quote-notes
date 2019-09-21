@@ -2,7 +2,6 @@ import { gql } from 'apollo-server-express';
 
 import {
   BookResolvers,
-  EntryResolvers,
   MutationResolvers,
   QueryResolvers,
   UserResolvers,
@@ -76,7 +75,6 @@ export const typeDefs = gql`
 
 interface Resolvers {
   Book: BookResolvers;
-  // Entry: EntryResolvers;
   Mutation: MutationResolvers;
   Query: QueryResolvers;
   User: UserResolvers;
@@ -115,13 +113,13 @@ export const resolvers: Resolvers = {
 
       return newEntry;
     },
-    updateEntry: async (_, { input }, { user }) => {
+    updateEntry: (_, { input }, { user }) => {
       if (!user) return null;
 
       const { id: owner } = user;
       return Entry.findOneAndUpdate({ owner, _id: input.id }, input, {
         new: true,
-      });
+      }).exec();
     },
     removeEntry: async (_, { id }, { user }) => {
       if (!user) return null;

@@ -58,6 +58,7 @@ interface Resolvers {
 }
 
 export const resolvers: Resolvers = {
+  // eslint-disable-next-line
   // @ts-ignore
   DateTime: dateTime,
   Entry: {
