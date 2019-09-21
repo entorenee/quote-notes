@@ -2,9 +2,9 @@ import { gql } from 'apollo-server-express';
 
 import {
   DateTimeScalarConfig,
+  EntryResolvers,
   MutationResolvers,
   QueryResolvers,
-  ResolversTypes,
   UserResolvers,
 } from '../../generated/graphql';
 import User from '../models/user';
@@ -35,6 +35,10 @@ export const typeDefs = gql`
     sub: String!
   }
 
+  extend type Entry {
+    owner: User
+  }
+
   extend type Query {
     me: User
     myBooks: [Book]
@@ -47,6 +51,7 @@ export const typeDefs = gql`
 
 interface Resolvers {
   DateTime: DateTimeScalarConfig;
+  Entry: EntryResolvers;
   Mutation: MutationResolvers;
   Query: QueryResolvers;
   User: UserResolvers;
@@ -55,11 +60,9 @@ interface Resolvers {
 export const resolvers: Resolvers = {
   // @ts-ignore
   DateTime: dateTime,
-  // User: {
-  //   __resolveObject(object) {
-  //     return User.findById(object.id);
-  //   },
-  // },
+  Entry: {
+    owner: ({ owner: id }) => User.findById(id).exec(),
+  },
   Query: {
     me: (_, args, { user }) => {
       if (user) {

@@ -2,13 +2,11 @@ import { gql } from 'apollo-server-express';
 
 import {
   AuthorResolvers,
-  BookResolvers,
+  EntryResolvers,
   QueryResolvers,
   UserResolvers,
 } from '../../generated/graphql';
-import Author from '../models/author';
 import Book from '../models/book';
-import Entry from '../models/entry';
 
 export const typeDefs = gql`
   type Book {
@@ -45,6 +43,10 @@ export const typeDefs = gql`
     booksWritten: [Book]
   }
 
+  extend type Entry {
+    book: Book
+  }
+
   extend type Query {
     allBooks: [Book]
     book(id: ID!): Book
@@ -53,7 +55,7 @@ export const typeDefs = gql`
 
 interface Resolvers {
   Author: AuthorResolvers;
-  Book: BookResolvers;
+  Entry: EntryResolvers;
   User: UserResolvers;
   Query: QueryResolvers;
 }
@@ -75,12 +77,7 @@ export const resolvers: Resolvers = {
         _id: { $in: booksWritten },
       }).exec(),
   },
-  Book: {
-    authors: ({ authors }) =>
-      Author.find({
-        _id: { $in: authors },
-      }).exec(),
-    entries: ({ id }, args, { user }) =>
-      !user ? [] : Entry.find({ book: id, owner: user.id }).exec(),
+  Entry: {
+    book: ({ book: id }) => Book.findById(id).exec(),
   },
 };

@@ -13,7 +13,6 @@ import { updateFieldId } from '../user-methods';
 export const typeDefs = gql`
   type Entry {
     id: ID!
-    book: Book!
     """
     Chapter relating to the note
     """
@@ -26,7 +25,6 @@ export const typeDefs = gql`
     User supplied notes for the entry
     """
     notes: String
-    owner: User!
     """
     Page the notes are referencing
     """
@@ -121,7 +119,7 @@ export const resolvers: Resolvers = {
       if (!user) return null;
 
       const { id: owner } = user;
-      return Entry.findOneAndUpdate({ _id: input.id, owner }, input, {
+      return Entry.findOneAndUpdate({ owner, _id: input.id }, input, {
         new: true,
       });
     },
@@ -137,7 +135,7 @@ export const resolvers: Resolvers = {
         value: id,
       });
 
-      const removed = await Entry.findOneAndRemove({ _id: id, owner });
+      const removed = await Entry.findOneAndRemove({ owner, _id: id });
       return removed !== null ? removed.id : null;
     },
   },
@@ -151,11 +149,4 @@ export const resolvers: Resolvers = {
     entries: ({ id }, args, { user }) =>
       Entry.find({ book: id, owner: user.id }).exec(),
   },
-  // Entry: {
-  //   // __resolveObject(object) {
-  //   //   return Entry.findById(object.id);
-  //   // },
-  //   book: ({ book }) => ({ id: book }),
-  //   owner: ({ owner }) => ({ id: owner }),
-  // },
 };

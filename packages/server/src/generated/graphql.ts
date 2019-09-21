@@ -40,18 +40,18 @@ export type Book = {
 export type Entry = {
    __typename?: 'Entry',
   id: Scalars['ID'],
-  book: Book,
   /** Chapter relating to the note */
   chapter?: Maybe<Scalars['String']>,
   /** Database generated timestamp of entry creation */
   createdAt: Scalars['DateTime'],
   /** User supplied notes for the entry */
   notes?: Maybe<Scalars['String']>,
-  owner: User,
   /** Page the notes are referencing */
   page?: Maybe<Scalars['Int']>,
   /** Quoted text from the book */
   quote?: Maybe<Scalars['String']>,
+  owner?: Maybe<User>,
+  book?: Maybe<Book>,
 };
 
 export type Mutation = {
@@ -220,10 +220,10 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>,
   String: ResolverTypeWrapper<Scalars['String']>,
   Entry: ResolverTypeWrapper<Entry>,
-  Book: ResolverTypeWrapper<Book>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
-  Author: ResolverTypeWrapper<Author>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
+  Book: ResolverTypeWrapper<Book>,
+  Author: ResolverTypeWrapper<Author>,
   Mutation: ResolverTypeWrapper<{}>,
   UserInput: UserInput,
   NewEntryInput: NewEntryInput,
@@ -238,10 +238,10 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'],
   String: Scalars['String'],
   Entry: Entry,
-  Book: Book,
   DateTime: Scalars['DateTime'],
-  Author: Author,
   Int: Scalars['Int'],
+  Book: Book,
+  Author: Author,
   Mutation: {},
   UserInput: UserInput,
   NewEntryInput: NewEntryInput,
@@ -271,13 +271,13 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type EntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Entry'] = ResolversParentTypes['Entry']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
-  book?: Resolver<ResolversTypes['Book'], ParentType, ContextType>,
   chapter?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
   page?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   quote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  owner?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
+  book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType>,
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
