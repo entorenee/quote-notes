@@ -1,9 +1,14 @@
 import { gql } from 'apollo-server-express';
-import mongoose from 'mongoose';
 
+import {
+  DateTimeScalarConfig,
+  EntryResolvers,
+  MutationResolvers,
+  QueryResolvers,
+  UserResolvers,
+} from '../../generated/graphql';
+import User from '../models/user';
 import dateTime from './custom-scalars/date-time';
-
-const User = mongoose.model('User');
 
 export const typeDefs = gql`
   scalar DateTime
@@ -30,6 +35,10 @@ export const typeDefs = gql`
     sub: String!
   }
 
+  extend type Entry {
+    owner: User
+  }
+
   extend type Query {
     me: User
     myBooks: [Book]
@@ -40,17 +49,24 @@ export const typeDefs = gql`
   }
 `;
 
-export const resolvers = {
+interface Resolvers {
+  DateTime: DateTimeScalarConfig;
+  Entry: EntryResolvers;
+  Mutation: MutationResolvers;
+  Query: QueryResolvers;
+  User: UserResolvers;
+}
+
+export const resolvers: Resolvers = {
+  // @ts-ignore
   DateTime: dateTime,
-  User: {
-    __resolveObject(object) {
-      return User.findById(object.id);
-    },
+  Entry: {
+    owner: ({ owner: id }) => User.findById(id).exec(),
   },
   Query: {
     me: (_, args, { user }) => {
       if (user) {
-        return User.findOne({ sub: user.sub });
+        return User.findOne({ sub: user.sub }).exec();
       }
 
       return null;
@@ -72,7 +88,7 @@ export const resolvers = {
         return User.findOneAndUpdate({ sub: user.sub }, user, {
           upsert: true,
           new: true,
-        });
+        }).exec();
       }
 
       return null;

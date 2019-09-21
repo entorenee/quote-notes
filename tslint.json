@@ -4,7 +4,8 @@
     "exclude": [
       "config/**/*.js",
       "node_modules/**/*",
-      "coverage/lcov-report/*.js"
+      "coverage/lcov-report/*.js",
+      "packages/server/src/generated/graphql.ts"
     ]
   },
   "rules": {

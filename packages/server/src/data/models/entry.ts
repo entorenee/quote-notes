@@ -1,20 +1,22 @@
-import * as mongoose from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
-const { Schema } = mongoose;
+import { BookModel } from './book';
+import { UserModel } from './user';
+
 const { ObjectId } = Schema.Types;
 
-export interface UserModel extends mongoose.Document {
+export interface EntryModel extends Document {
   id: string;
-  book: string;
+  book: BookModel['_id'];
   chapter: string;
   createdAt: Date;
   notes: string;
-  owner: string;
+  owner: UserModel['_id'];
   page: number;
   quote: string;
 }
 
-const entriesSchema = new Schema({
+const entriesSchema: Schema = new Schema({
   book: {
     type: ObjectId,
     ref: 'Book',
@@ -35,4 +37,4 @@ const entriesSchema = new Schema({
   quote: String,
 });
 
-module.exports = mongoose.model('Entry', entriesSchema, 'entries');
+export default model<EntryModel>('Entry', entriesSchema, 'entries');
