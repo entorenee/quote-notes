@@ -1,19 +1,8 @@
-import { Document, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-import { BookModel } from './book';
-import { EntryModel } from './entry';
+import { UserModel } from './types';
 
 const { ObjectId } = Schema.Types;
-
-export interface UserModel extends Document {
-  id: string;
-  books: BookModel['_id'];
-  createdAt: Date;
-  entries: EntryModel['_id'];
-  name?: string;
-  picture?: string;
-  sub: string;
-}
 
 const userSchema: Schema = new Schema({
   books: [
