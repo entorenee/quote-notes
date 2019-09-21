@@ -2,24 +2,24 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
+export interface Scalars {
   ID: string,
   String: string,
   Boolean: boolean,
   Int: number,
   Float: number,
   DateTime: any,
-};
+}
 
-export type Author = {
+export interface Author {
    __typename?: 'Author',
   id: Scalars['ID'],
   name: Scalars['String'],
   /** Other books written by the author and also stored in the database */
-  booksWritten: Array<Book>,
-};
+  booksWritten: Book[],
+}
 
-export type Book = {
+export interface Book {
    __typename?: 'Book',
   id: Scalars['ID'],
   /** ISBN number of the book */
@@ -34,10 +34,10 @@ export type Book = {
   entries?: Maybe<Array<Maybe<Entry>>>,
   /** A list of authors for a given book */
   authors?: Maybe<Array<Maybe<Author>>>,
-};
+}
 
 
-export type Entry = {
+export interface Entry {
    __typename?: 'Entry',
   id: Scalars['ID'],
   book: Book,
@@ -52,45 +52,45 @@ export type Entry = {
   page?: Maybe<Scalars['Int']>,
   /** Quoted text from the book */
   quote?: Maybe<Scalars['String']>,
-};
+}
 
-export type Mutation = {
+export interface Mutation {
    __typename?: 'Mutation',
   updateUser?: Maybe<User>,
   createEntry?: Maybe<Entry>,
   updateEntry?: Maybe<Entry>,
   removeEntry?: Maybe<Scalars['ID']>,
-};
+}
 
 
-export type MutationUpdateUserArgs = {
+export interface MutationUpdateUserArgs {
   user: UserInput
-};
+}
 
 
-export type MutationCreateEntryArgs = {
+export interface MutationCreateEntryArgs {
   input?: Maybe<NewEntryInput>
-};
+}
 
 
-export type MutationUpdateEntryArgs = {
+export interface MutationUpdateEntryArgs {
   input?: Maybe<UpdateEntryInput>
-};
+}
 
 
-export type MutationRemoveEntryArgs = {
+export interface MutationRemoveEntryArgs {
   id: Scalars['ID']
-};
+}
 
-export type NewEntryInput = {
+export interface NewEntryInput {
   book: Scalars['ID'],
   chapter?: Maybe<Scalars['String']>,
   notes?: Maybe<Scalars['String']>,
   page?: Maybe<Scalars['Int']>,
   quote?: Maybe<Scalars['String']>,
-};
+}
 
-export type Query = {
+export interface Query {
    __typename?: 'Query',
   me?: Maybe<User>,
   myBooks?: Maybe<Array<Maybe<Book>>>,
@@ -98,34 +98,34 @@ export type Query = {
   entry?: Maybe<Entry>,
   allAuthors?: Maybe<Array<Maybe<Author>>>,
   author?: Maybe<Author>,
-  allBooks: Array<Book>,
+  allBooks: Book[],
   book?: Maybe<Book>,
-};
+}
 
 
-export type QueryEntryArgs = {
+export interface QueryEntryArgs {
   id: Scalars['ID']
-};
+}
 
 
-export type QueryAuthorArgs = {
+export interface QueryAuthorArgs {
   id: Scalars['ID']
-};
+}
 
 
-export type QueryBookArgs = {
+export interface QueryBookArgs {
   id: Scalars['ID']
-};
+}
 
-export type UpdateEntryInput = {
+export interface UpdateEntryInput {
   id: Scalars['ID'],
   chapter?: Maybe<Scalars['String']>,
   notes?: Maybe<Scalars['String']>,
   page?: Maybe<Scalars['Int']>,
   quote?: Maybe<Scalars['String']>,
-};
+}
 
-export type User = {
+export interface User {
    __typename?: 'User',
   id: Scalars['ID'],
   /** User's name from oAuth provider */
@@ -136,14 +136,14 @@ export type User = {
   sub: Scalars['String'],
   entries?: Maybe<Array<Maybe<Entry>>>,
   /** A user's collection of books to take notes on */
-  books: Array<Book>,
-};
+  books: Book[],
+}
 
-export type UserInput = {
+export interface UserInput {
   name?: Maybe<Scalars['String']>,
   picture?: Maybe<Scalars['String']>,
   sub: Scalars['String'],
-};
+}
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -156,10 +156,10 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
 ) => Promise<TResult> | TResult;
 
 
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+export interface StitchingResolver<TResult, TParent, TContext, TArgs> {
   fragment: string;
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
-};
+}
 
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
@@ -214,7 +214,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = {
+export interface ResolversTypes {
   Query: ResolverTypeWrapper<{}>,
   User: ResolverTypeWrapper<User>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
@@ -229,10 +229,10 @@ export type ResolversTypes = {
   NewEntryInput: NewEntryInput,
   UpdateEntryInput: UpdateEntryInput,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
-};
+}
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = {
+export interface ResolversParentTypes {
   Query: {},
   User: User,
   ID: Scalars['ID'],
@@ -247,15 +247,15 @@ export type ResolversParentTypes = {
   NewEntryInput: NewEntryInput,
   UpdateEntryInput: UpdateEntryInput,
   Boolean: Scalars['Boolean'],
-};
+}
 
-export type AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = {
+export interface AuthorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   booksWritten?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>,
-};
+}
 
-export type BookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = {
+export interface BookResolvers<ContextType = any, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   isbn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   publishedDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>,
@@ -263,13 +263,13 @@ export type BookResolvers<ContextType = any, ParentType extends ResolversParentT
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   entries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Entry']>>>, ParentType, ContextType>,
   authors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Author']>>>, ParentType, ContextType>,
-};
+}
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime'
 }
 
-export type EntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Entry'] = ResolversParentTypes['Entry']> = {
+export interface EntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Entry'] = ResolversParentTypes['Entry']> {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   book?: Resolver<ResolversTypes['Book'], ParentType, ContextType>,
   chapter?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
@@ -278,16 +278,16 @@ export type EntryResolvers<ContextType = any, ParentType extends ResolversParent
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
   page?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   quote?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-};
+}
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export interface MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> {
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'user'>>,
   createEntry?: Resolver<Maybe<ResolversTypes['Entry']>, ParentType, ContextType, MutationCreateEntryArgs>,
   updateEntry?: Resolver<Maybe<ResolversTypes['Entry']>, ParentType, ContextType, MutationUpdateEntryArgs>,
   removeEntry?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveEntryArgs, 'id'>>,
-};
+}
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export interface QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> {
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
   myBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>,
   allEntries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Entry']>>>, ParentType, ContextType>,
@@ -296,18 +296,18 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   author?: Resolver<Maybe<ResolversTypes['Author']>, ParentType, ContextType, RequireFields<QueryAuthorArgs, 'id'>>,
   allBooks?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>,
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>,
-};
+}
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export interface UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   sub?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   entries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Entry']>>>, ParentType, ContextType>,
   books?: Resolver<Array<ResolversTypes['Book']>, ParentType, ContextType>,
-};
+}
 
-export type Resolvers<ContextType = any> = {
+export interface Resolvers<ContextType = any> {
   Author?: AuthorResolvers<ContextType>,
   Book?: BookResolvers<ContextType>,
   DateTime?: GraphQLScalarType,
@@ -315,7 +315,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
   User?: UserResolvers<ContextType>,
-};
+}
 
 
 /**
