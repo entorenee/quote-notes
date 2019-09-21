@@ -1,15 +1,18 @@
 module.exports = {
-  parser: 'babel-eslint',
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'dslemay',
+    'dslemay/react',
+    'dslemay/jest',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
+  ],
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {},
+    },
   },
-  env: {
-    'jest/globals': true
-  },
-  plugins: ['react', 'jest', 'prettier'],
-  extends: ['airbnb', 'prettier', 'prettier/react'],
-  rules: {
-    'react/jsx-filename-extension': 0,
-  }
 };

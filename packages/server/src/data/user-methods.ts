@@ -1,12 +1,4 @@
-import * as mongoose from 'mongoose';
-import { UserModel } from './models/user';
-
-const User = mongoose.model('User');
-
-enum SetOps {
-  push = '$push',
-  pull = '$pull',
-}
+import User from './models/user';
 
 interface UpdateField {
   objectId: string;

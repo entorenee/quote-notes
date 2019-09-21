@@ -1,14 +1,8 @@
-import { Document, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-import { BookModel } from './book'
+import { AuthorModel } from './types';
 
 const { ObjectId } = Schema.Types;
-
-export interface AuthorModel extends Document {
-  id: string;
-  booksWritten: BookModel['_id'];
-  name: string;
-}
 
 const authorSchema: Schema = new Schema({
   booksWritten: [

@@ -1,17 +1,8 @@
-import { Document, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-import { AuthorModel } from './author';
+import { BookModel } from './types';
 
 const { ObjectId } = Schema.Types;
-
-export interface BookModel extends Document {
-  id: string;
-  authors: AuthorModel['_id'];
-  isbn: string;
-  publishedDate?: Date;
-  synopsis?: string;
-  title: string;
-}
 
 const bookSchema: Schema = new Schema({
   authors: [

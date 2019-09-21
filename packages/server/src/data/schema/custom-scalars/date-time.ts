@@ -1,10 +1,6 @@
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 
-import {
-  DateTimeScalarConfig,
-} from '../../../generated/graphql'
-
 export default new GraphQLScalarType({
   name: 'DateTime',
   description: 'Date custom scalar type',
