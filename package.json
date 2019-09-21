@@ -13,12 +13,15 @@
     "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
     "fmt:js": "prettier --write 'packages/**/*.{js,jsx}'",
     "lint:ts": "tslint --fix 'packages/**/*.{ts,tsx}'",
-    "lint:js": "eslint --fix 'packages/**/*.{js,jsx}'",
+    "lint:js": "eslint --fix --ext js,jsx,ts,tsx 'packages/server'",
     "ci": "yarn fmt:ts && yarn lint:ts"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.3.0",
+    "@typescript-eslint/parser": "^2.3.0",
     "eslint": "^6.4.0",
     "eslint-config-dslemay": "^3.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-react": "^7.14.3",
     "husky": "^3.0.5",
     "lint-staged": "^9.2.5",
