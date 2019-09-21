@@ -13,7 +13,7 @@
     "fmt:ts": "prettier --write 'packages/**/*.{ts,tsx}'",
     "fmt:js": "prettier --write 'packages/**/*.{js,jsx}'",
     "lint": "eslint --fix --ext js,jsx,ts,tsx 'packages/server'",
-    "ci": "yarn fmt:ts && yarn lint:ts"
+    "ci": "yarn fmt:ts && yarn lint"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.3.0",
