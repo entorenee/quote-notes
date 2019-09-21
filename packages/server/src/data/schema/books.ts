@@ -1,7 +1,14 @@
 import { gql } from 'apollo-server-express';
-import mongoose from 'mongoose';
 
-const Book = mongoose.model('Book');
+import {
+  AuthorResolvers,
+  BookResolvers,
+  QueryResolvers,
+  UserResolvers,
+} from '../../generated/graphql';
+import Author from '../models/author';
+import Book from '../models/book';
+import Entry from '../models/entry';
 
 export const typeDefs = gql`
   type Book {
@@ -44,26 +51,36 @@ export const typeDefs = gql`
   }
 `;
 
-export const resolvers = {
+interface Resolvers {
+  Author: AuthorResolvers;
+  Book: BookResolvers;
+  User: UserResolvers;
+  Query: QueryResolvers;
+}
+
+export const resolvers: Resolvers = {
   Query: {
-    allBooks: () => Book.find({}),
-    book: (_, { id }) => Book.findById(id),
+    allBooks: () => Book.find({}).exec(),
+    book: (_, { id }) => Book.findById(id).exec(),
   },
   User: {
     books: ({ books }) =>
       Book.find({
         _id: { $in: books },
-      }),
+      }).exec(),
   },
   Author: {
     booksWritten: ({ booksWritten }) =>
       Book.find({
         _id: { $in: booksWritten },
-      }),
+      }).exec(),
   },
   Book: {
-    __resolveObject(object) {
-      return Book.findById(object.id);
-    },
+    authors: ({ authors }) =>
+      Author.find({
+        _id: { $in: authors },
+      }).exec(),
+    entries: ({ id }, args, { user }) =>
+      !user ? [] : Entry.find({ book: id, owner: user.id }).exec(),
   },
 };
