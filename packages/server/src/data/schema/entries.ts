@@ -1,8 +1,14 @@
 import { gql } from 'apollo-server-express';
-import mongoose from 'mongoose';
-import { updateFieldId } from '../user-methods';
 
-const Entry = mongoose.model('Entry');
+import {
+  BookResolvers,
+  EntryResolvers,
+  MutationResolvers,
+  QueryResolvers,
+  UserResolvers,
+} from '../../generated/graphql';
+import Entry from '../models/entry';
+import { updateFieldId } from '../user-methods';
 
 export const typeDefs = gql`
   type Entry {
@@ -64,13 +70,21 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    createEntry(input: NewEntryInput): Entry
-    updateEntry(input: UpdateEntryInput): Entry
+    createEntry(input: NewEntryInput!): Entry
+    updateEntry(input: UpdateEntryInput!): Entry
     removeEntry(id: ID!): ID
   }
 `;
 
-export const resolvers = {
+interface Resolvers {
+  Book: BookResolvers;
+  // Entry: EntryResolvers;
+  Mutation: MutationResolvers;
+  Query: QueryResolvers;
+  User: UserResolvers;
+}
+
+export const resolvers: Resolvers = {
   Query: {
     allEntries: async (_, args, { user }) => {
       if (!user) return null;
@@ -79,7 +93,7 @@ export const resolvers = {
 
       return data.length ? data : null;
     },
-    entry: (_, { id }) => Entry.findById(id),
+    entry: (_, { id }) => Entry.findById(id).exec(),
   },
   Mutation: {
     createEntry: async (_, { input }, { user }) => {
@@ -124,24 +138,24 @@ export const resolvers = {
       });
 
       const removed = await Entry.findOneAndRemove({ _id: id, owner });
-      return removed.id;
+      return removed !== null ? removed.id : null;
     },
   },
   User: {
     entries: ({ entries }) =>
       Entry.find({
         _id: { $in: entries },
-      }),
+      }).exec(),
   },
   Book: {
     entries: ({ id }, args, { user }) =>
-      Entry.find({ book: id, owner: user.id }),
+      Entry.find({ book: id, owner: user.id }).exec(),
   },
-  Entry: {
-    __resolveObject(object) {
-      return Entry.findById(object.id);
-    },
-    book: ({ book }) => ({ id: book }),
-    owner: ({ owner }) => ({ id: owner }),
-  },
+  // Entry: {
+  //   // __resolveObject(object) {
+  //   //   return Entry.findById(object.id);
+  //   // },
+  //   book: ({ book }) => ({ id: book }),
+  //   owner: ({ owner }) => ({ id: owner }),
+  // },
 };
