@@ -56,6 +56,7 @@ const server = new ApolloServer({
     require('./data/schema/entries'),
     require('./data/schema/authors'),
     require('./data/schema/books'),
+    require('./data/schema/isbn'),
   ],
   context: ({ req }: any) => {
     return { user: req.user };
