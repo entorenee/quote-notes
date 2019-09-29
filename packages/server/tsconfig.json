@@ -15,7 +15,7 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "include": ["packages/server"],
+  "include": ["src"],
   "exclude": ["node_modules"],
-  "types": ["packages/server/src/types.d.ts"]
+  "types": ["src/types.d.ts"]
 }
