@@ -26,7 +26,7 @@ const addBookToUser = (userId: string, bookId: string): Promise<NullableUser> =>
     value: bookId,
   });
 
-export const addToMyBooks = async (
+const addToMyBooks = async (
   isbn: string,
   user: UserModel,
 ): Promise<NullableBook> => {

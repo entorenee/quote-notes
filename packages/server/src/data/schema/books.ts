@@ -9,7 +9,7 @@ import {
 } from '../../generated/graphql';
 import Book from '../models/book';
 import { NullableBook } from '../models/types';
-import { addToMyBooks } from '../controllers/add-to-my-books';
+import addToMyBooks from '../controllers/add-to-my-books';
 
 export const typeDefs = gql`
   type Book {
