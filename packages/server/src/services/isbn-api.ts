@@ -18,6 +18,9 @@ const fetchIsbn = async (url: string) => {
 export const fetchBooks = (book: string): Promise<ISBNBook[]> =>
   fetchIsbn(`books/${book}`).then(data => data.books);
 
+export const fetchBook = (isbn: string): Promise<ISBNBook> =>
+  fetchIsbn(`book/${isbn}`).then(data => data.book);
+
 export const fetchAuthors = (author: string): Promise<RawAuthorsResponse> =>
   fetchIsbn(`authors/${author}`);
 

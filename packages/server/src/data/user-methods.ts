@@ -14,5 +14,5 @@ export const updateFieldId = (updater: UpdateField) => {
     objectId,
     { [operator]: { [field]: value } },
     { new: true },
-  );
+  ).exec();
 };

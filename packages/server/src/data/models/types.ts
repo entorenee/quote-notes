@@ -1,5 +1,7 @@
 import { Document } from 'mongoose';
 
+type Optional<T> = T | null;
+
 export interface AuthorModel extends Document {
   id: string;
   booksWritten: BookModel['_id'];
@@ -35,3 +37,9 @@ export interface UserModel extends Document {
   picture?: string;
   sub: string;
 }
+
+export type NullableAuthor = Optional<AuthorModel>;
+export type NullableBook = Optional<BookModel>;
+export type NullableEntry = Optional<EntryModel>;
+export type NullableUser = Optional<UserModel>;
+

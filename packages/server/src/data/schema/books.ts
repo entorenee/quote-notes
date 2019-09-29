@@ -3,10 +3,12 @@ import { gql } from 'apollo-server-express';
 import {
   AuthorResolvers,
   EntryResolvers,
+  MutationResolvers,
   QueryResolvers,
   UserResolvers,
 } from '../../generated/graphql';
 import Book from '../models/book';
+import { addToMyBooks } from '../controllers/add-to-my-books';
 
 export const typeDefs = gql`
   type Book {
@@ -51,11 +53,16 @@ export const typeDefs = gql`
     allBooks: [Book]
     book(id: ID!): Book
   }
+
+  extend type Mutation {
+    addToMyBooks(isbn: String!): Book
+  }
 `;
 
 interface Resolvers {
   Author: AuthorResolvers;
   Entry: EntryResolvers;
+  Mutation: MutationResolvers;
   User: UserResolvers;
   Query: QueryResolvers;
 }
@@ -64,6 +71,11 @@ export const resolvers: Resolvers = {
   Query: {
     allBooks: () => Book.find({}).exec(),
     book: (_, { id }) => Book.findById(id).exec(),
+  },
+  Mutation: {
+    addToMyBooks: (_, { isbn }, { user }) => {
+      return addToMyBooks(isbn, user);
+    },
   },
   User: {
     books: ({ books }) =>
