@@ -8,8 +8,9 @@ import {
   UserResolvers,
 } from '../../generated/graphql';
 import Book from '../models/book';
-import { NullableBook } from '../models/types';
-import { addToMyBooks } from '../controllers/add-to-my-books';
+import { NullableBook, NullableUser } from '../models/types';
+import addToMyBooks from '../controllers/add-to-my-books';
+import removeMyBook from '../controllers/remove-my-book';
 
 export const typeDefs = gql`
   type Book {
@@ -57,6 +58,7 @@ export const typeDefs = gql`
 
   extend type Mutation {
     addToMyBooks(isbn: String!): Book
+    removeMyBook(id: ID!): User
   }
 `;
 
@@ -77,6 +79,8 @@ export const resolvers: Resolvers = {
     addToMyBooks: (_, { isbn }, { user }): Promise<NullableBook> => {
       return addToMyBooks(isbn, user);
     },
+    removeMyBook: (_, { id }, { user }): Promise<NullableUser> =>
+      removeMyBook(id, user),
   },
   User: {
     books: ({ books }): Promise<NullableBook[]> =>
