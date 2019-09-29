@@ -62,7 +62,7 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    allEntries: [Entry]
+    myEntries: [Entry]
     entry(id: ID!): Entry
   }
 
@@ -82,7 +82,7 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    allEntries: async (_, args, { user }) => {
+    myEntries: async (_, args, { user }) => {
       if (!user) return null;
 
       const data = await Entry.find({ owner: user.id });
