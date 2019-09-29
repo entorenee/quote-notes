@@ -8,6 +8,7 @@ import {
   UserResolvers,
 } from '../../generated/graphql';
 import Book from '../models/book';
+import { NullableBook } from '../models/types';
 import { addToMyBooks } from '../controllers/add-to-my-books';
 
 export const typeDefs = gql`
@@ -69,27 +70,27 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    allBooks: () => Book.find({}).exec(),
-    book: (_, { id }) => Book.findById(id).exec(),
+    allBooks: (): Promise<NullableBook[]> => Book.find({}).exec(),
+    book: (_, { id }): Promise<NullableBook> => Book.findById(id).exec(),
   },
   Mutation: {
-    addToMyBooks: (_, { isbn }, { user }) => {
+    addToMyBooks: (_, { isbn }, { user }): Promise<NullableBook> => {
       return addToMyBooks(isbn, user);
     },
   },
   User: {
-    books: ({ books }) =>
+    books: ({ books }): Promise<NullableBook[]> =>
       Book.find({
         _id: { $in: books },
       }).exec(),
   },
   Author: {
-    booksWritten: ({ booksWritten }) =>
+    booksWritten: ({ booksWritten }): Promise<NullableBook[]> =>
       Book.find({
         _id: { $in: booksWritten },
       }).exec(),
   },
   Entry: {
-    book: ({ book: id }) => Book.findById(id).exec(),
+    book: ({ book: id }): Promise<NullableBook> => Book.findById(id).exec(),
   },
 };

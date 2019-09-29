@@ -7,6 +7,7 @@ import {
   UserResolvers,
 } from '../../generated/graphql';
 import Entry from '../models/entry';
+import { EntryModel, NullableEntry } from '../models/types';
 import { updateFieldId } from '../user-methods';
 
 export const typeDefs = gql`
@@ -82,17 +83,17 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    myEntries: async (_, args, { user }) => {
+    myEntries: async (_, args, { user }): Promise<EntryModel[] | null> => {
       if (!user) return null;
 
       const data = await Entry.find({ owner: user.id });
 
       return data.length ? data : null;
     },
-    entry: (_, { id }) => Entry.findById(id).exec(),
+    entry: (_, { id }): Promise<NullableEntry> => Entry.findById(id).exec(),
   },
   Mutation: {
-    createEntry: async (_, { input }, { user }) => {
+    createEntry: async (_, { input }, { user }): Promise<NullableEntry> => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -113,7 +114,7 @@ export const resolvers: Resolvers = {
 
       return newEntry;
     },
-    updateEntry: (_, { input }, { user }) => {
+    updateEntry: (_, { input }, { user }): Promise<NullableEntry> | null => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -121,7 +122,7 @@ export const resolvers: Resolvers = {
         new: true,
       }).exec();
     },
-    removeEntry: async (_, { id }, { user }) => {
+    removeEntry: async (_, { id }, { user }): Promise<string | null> => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -138,13 +139,13 @@ export const resolvers: Resolvers = {
     },
   },
   User: {
-    entries: ({ entries }) =>
+    entries: ({ entries }): Promise<NullableEntry[]> =>
       Entry.find({
         _id: { $in: entries },
       }).exec(),
   },
   Book: {
-    entries: ({ id }, args, { user }) =>
+    entries: ({ id }, args, { user }): Promise<NullableEntry[]> =>
       Entry.find({ book: id, owner: user.id }).exec(),
   },
 };
