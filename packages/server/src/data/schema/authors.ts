@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 import { BookResolvers, QueryResolvers } from '../../generated/graphql';
+import { NullableAuthor } from '../models/types';
 import Author from '../models/author';
 
 export const typeDefs = gql`
@@ -29,11 +30,11 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    allAuthors: () => Author.find({}).exec(),
-    author: (_, { id }) => Author.findById(id).exec(),
+    allAuthors: (): Promise<NullableAuthor[]> => Author.find({}).exec(),
+    author: (_, { id }): Promise<NullableAuthor> => Author.findById(id).exec(),
   },
   Book: {
-    authors: ({ authors }) =>
+    authors: ({ authors }): Promise<NullableAuthor[]> =>
       Author.find({
         _id: { $in: authors },
       }).exec(),

@@ -124,7 +124,7 @@ export type Query = {
    __typename?: 'Query',
   me?: Maybe<User>,
   myBooks?: Maybe<Array<Maybe<Book>>>,
-  allEntries?: Maybe<Array<Maybe<Entry>>>,
+  myEntries?: Maybe<Array<Maybe<Entry>>>,
   entry?: Maybe<Entry>,
   allAuthors?: Maybe<Array<Maybe<Author>>>,
   author?: Maybe<Author>,
@@ -352,7 +352,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
   myBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>,
-  allEntries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Entry']>>>, ParentType, ContextType>,
+  myEntries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Entry']>>>, ParentType, ContextType>,
   entry?: Resolver<Maybe<ResolversTypes['Entry']>, ParentType, ContextType, RequireFields<QueryEntryArgs, 'id'>>,
   allAuthors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Author']>>>, ParentType, ContextType>,
   author?: Resolver<Maybe<ResolversTypes['Author']>, ParentType, ContextType, RequireFields<QueryAuthorArgs, 'id'>>,
