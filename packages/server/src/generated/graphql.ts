@@ -84,6 +84,7 @@ export type Mutation = {
   createEntry?: Maybe<Entry>,
   updateEntry?: Maybe<Entry>,
   removeEntry?: Maybe<Scalars['ID']>,
+  addToMyBooks?: Maybe<Book>,
 };
 
 
@@ -104,6 +105,11 @@ export type MutationUpdateEntryArgs = {
 
 export type MutationRemoveEntryArgs = {
   id: Scalars['ID']
+};
+
+
+export type MutationAddToMyBooksArgs = {
+  isbn: Scalars['String']
 };
 
 export type NewEntryInput = {
@@ -340,6 +346,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createEntry?: Resolver<Maybe<ResolversTypes['Entry']>, ParentType, ContextType, RequireFields<MutationCreateEntryArgs, 'input'>>,
   updateEntry?: Resolver<Maybe<ResolversTypes['Entry']>, ParentType, ContextType, RequireFields<MutationUpdateEntryArgs, 'input'>>,
   removeEntry?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveEntryArgs, 'id'>>,
+  addToMyBooks?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<MutationAddToMyBooksArgs, 'isbn'>>,
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
