@@ -24,5 +24,5 @@ export const fetchBook = (isbn: string): Promise<ISBNBook> =>
 export const fetchAuthors = (author: string): Promise<RawAuthorsResponse> =>
   fetchIsbn(`authors/${author}`);
 
-export const fetchAuthor = (author: string): Promise<RawAuthorResponse> =>
-  fetchIsbn(`author/${author}`);
+export const fetchAuthor = (author: string): Promise<ISBNBook[]> =>
+  fetchIsbn(`author/${author}`).then(data => data.books);
