@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-express';
 
-import { fetchBooks } from '../../services/isbn-api';
+import { fetchAuthor, fetchBooks } from '../../services/isbn-api';
+import { ISBNBook } from '../../services/types';
 import { QueryResolvers } from '../../generated/graphql';
 
 export const typeDefs = gql`
@@ -28,6 +29,7 @@ export const typeDefs = gql`
   }
 
   extend type Query {
+    isbnAuthor(name: String!): [ISBNBook!]!
     isbnBooks(name: String!): [ISBNBook!]!
   }
 `;
@@ -38,6 +40,7 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    isbnBooks: (_, { name }) => fetchBooks(name),
+    isbnAuthor: (_, { name }): Promise<ISBNBook[]> => fetchAuthor(name),
+    isbnBooks: (_, { name }): Promise<ISBNBook[]> => fetchBooks(name),
   },
 };

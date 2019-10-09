@@ -137,6 +137,7 @@ export type Query = {
   allBooks?: Maybe<Array<Maybe<Book>>>,
   book?: Maybe<Book>,
   isbnBooks: Array<IsbnBook>,
+  isbnAuthor: Array<IsbnBook>,
 };
 
 
@@ -156,6 +157,11 @@ export type QueryBookArgs = {
 
 
 export type QueryIsbnBooksArgs = {
+  name: Scalars['String']
+};
+
+
+export type QueryIsbnAuthorArgs = {
   name: Scalars['String']
 };
 
@@ -366,6 +372,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   allBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Book']>>>, ParentType, ContextType>,
   book?: Resolver<Maybe<ResolversTypes['Book']>, ParentType, ContextType, RequireFields<QueryBookArgs, 'id'>>,
   isbnBooks?: Resolver<Array<ResolversTypes['ISBNBook']>, ParentType, ContextType, RequireFields<QueryIsbnBooksArgs, 'name'>>,
+  isbnAuthor?: Resolver<Array<ResolversTypes['ISBNBook']>, ParentType, ContextType, RequireFields<QueryIsbnAuthorArgs, 'name'>>,
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
