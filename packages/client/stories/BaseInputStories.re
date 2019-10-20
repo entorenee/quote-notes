@@ -9,6 +9,7 @@ storiesOf("Input", _module)
       let onChange = action("Character typed");
 
       <BaseInput
+        inputId="sample-id"
         labelText="Sample label"
         onChange
         placeholder="Type here"
