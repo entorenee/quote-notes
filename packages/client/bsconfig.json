@@ -19,7 +19,7 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react", "bs-storybook"],
+  "bs-dependencies": ["reason-react", "bs-storybook", "bs-css"],
   "ppx-flags": [],
   "refmt": 3
 }
