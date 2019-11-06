@@ -1,4 +1,4 @@
-let str = React.string;
+open ReactUtils;
 open Css;
 open Belt;
 
