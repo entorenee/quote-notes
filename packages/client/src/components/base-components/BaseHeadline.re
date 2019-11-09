@@ -8,10 +8,30 @@ type level =
   | H4;
 
 module Styles = {
-  let h1 = style([color(pink)]);
-  let h2 = style([color(red)]);
-  let h3 = style([color(green)]);
-  let h4 = style([color(blue)]);
+  let h1 =
+    style([
+      fontSize(rem(2.5)),
+      media(Theme.media.sm, [fontSize(rem(3.0))]),
+      media(Theme.media.lg, [fontSize(rem(4.0))]),
+    ]);
+  let h2 =
+    style([
+      fontSize(rem(2.0)),
+      media(Theme.media.sm, [fontSize(rem(2.5))]),
+      media(Theme.media.lg, [fontSize(rem(3.5))]),
+    ]);
+  let h3 =
+    style([
+      fontSize(rem(1.5)),
+      media(Theme.media.sm, [fontSize(rem(2.0))]),
+      media(Theme.media.lg, [fontSize(rem(3.0))]),
+    ]);
+  let h4 =
+    style([
+      fontSize(rem(1.0)),
+      media(Theme.media.sm, [fontSize(rem(1.5))]),
+      media(Theme.media.lg, [fontSize(rem(2.5))]),
+    ]);
 
   let override = variant =>
     switch (variant) {
