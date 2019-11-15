@@ -8,29 +8,39 @@ type level =
   | H4;
 
 module Styles = {
+  let headlineBase = style([color(Theme.colors.primary)]);
+
   let h1 =
-    style([
-      fontSize(rem(2.5)),
-      media(Theme.media.sm, [fontSize(rem(3.0))]),
-      media(Theme.media.lg, [fontSize(rem(4.0))]),
+    merge([
+      headlineBase,
+      style([
+        fontSize(rem(2.488)),
+        media(Theme.media.sm, [fontSize(rem(4.209))]),
+      ]),
     ]);
   let h2 =
-    style([
-      fontSize(rem(2.0)),
-      media(Theme.media.sm, [fontSize(rem(2.5))]),
-      media(Theme.media.lg, [fontSize(rem(3.5))]),
+    merge([
+      headlineBase,
+      style([
+        fontSize(rem(2.074)),
+        media(Theme.media.sm, [fontSize(rem(3.157))]),
+      ]),
     ]);
   let h3 =
-    style([
-      fontSize(rem(1.5)),
-      media(Theme.media.sm, [fontSize(rem(2.0))]),
-      media(Theme.media.lg, [fontSize(rem(3.0))]),
+    merge([
+      headlineBase,
+      style([
+        fontSize(rem(1.728)),
+        media(Theme.media.sm, [fontSize(rem(2.369))]),
+      ]),
     ]);
   let h4 =
-    style([
-      fontSize(rem(1.0)),
-      media(Theme.media.sm, [fontSize(rem(1.5))]),
-      media(Theme.media.lg, [fontSize(rem(2.5))]),
+    merge([
+      headlineBase,
+      style([
+        fontSize(rem(1.44)),
+        media(Theme.media.sm, [fontSize(rem(1.777))]),
+      ]),
     ]);
 
   let override = variant =>
