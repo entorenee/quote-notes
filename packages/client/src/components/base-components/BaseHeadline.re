@@ -8,14 +8,14 @@ type level =
   | H4;
 
 module Styles = {
-  let headlineBase = style([color(Theme.colors.primary)]);
+  let headlineBase = style([color(Theme.Colors.primary)]);
 
   let h1 =
     merge([
       headlineBase,
       style([
         fontSize(rem(2.488)),
-        media(Theme.media.sm, [fontSize(rem(4.209))]),
+        media(Theme.Media.sm, [fontSize(rem(4.209))]),
       ]),
     ]);
   let h2 =
@@ -23,7 +23,7 @@ module Styles = {
       headlineBase,
       style([
         fontSize(rem(2.074)),
-        media(Theme.media.sm, [fontSize(rem(3.157))]),
+        media(Theme.Media.sm, [fontSize(rem(3.157))]),
       ]),
     ]);
   let h3 =
@@ -31,7 +31,7 @@ module Styles = {
       headlineBase,
       style([
         fontSize(rem(1.728)),
-        media(Theme.media.sm, [fontSize(rem(2.369))]),
+        media(Theme.Media.sm, [fontSize(rem(2.369))]),
       ]),
     ]);
   let h4 =
@@ -39,7 +39,7 @@ module Styles = {
       headlineBase,
       style([
         fontSize(rem(1.44)),
-        media(Theme.media.sm, [fontSize(rem(1.777))]),
+        media(Theme.Media.sm, [fontSize(rem(1.777))]),
       ]),
     ]);
 
