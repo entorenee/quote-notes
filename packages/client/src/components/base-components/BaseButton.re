@@ -1,11 +1,36 @@
+type variant =
+  | Primary
+  | Secondary;
+
 module Styles = {
   open Css;
+  open Theme;
 
-  let button = style([padding2(~v=rem(0.5), ~h=rem(2.0))]);
+  let baseButtonStyles =
+    style([
+      padding2(~v=Spacer.sp01, ~h=Spacer.sp04),
+      color(Colors.light),
+      fontSize(FontSize.xl),
+    ]);
+
+  let primary =
+    merge([baseButtonStyles, style([backgroundColor(Colors.primary)])]);
+  let secondary =
+    merge([baseButtonStyles, style([backgroundColor(Colors.accentDark)])]);
+
+  let button = variant =>
+    switch (variant) {
+    | Primary => primary
+    | Secondary => secondary
+    };
 };
 
 [@react.component]
-let make = (~className="", ~disabled=false, ~children, ~onClick) =>
-  <button className={Css.merge([Styles.button, className])} disabled onClick>
+let make =
+    (~className="", ~disabled=false, ~children, ~onClick, ~variant=Primary) =>
+  <button
+    className={Css.merge([Styles.button(variant), className])}
+    disabled
+    onClick>
     children
   </button>;
