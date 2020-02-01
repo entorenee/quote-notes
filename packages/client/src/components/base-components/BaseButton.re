@@ -4,19 +4,12 @@ type variant =
 
 module Styles = {
   open Css;
-  open Theme;
 
-  let baseButtonStyles =
-    style([
-      padding2(~v=Spacer.sp01, ~h=Spacer.sp04),
-      color(Colors.light),
-      fontSize(FontSize.xl),
-    ]);
+  let baseButtonStyles = "py-2 px-8 text-light text-xl";
 
-  let primary =
-    merge([baseButtonStyles, style([backgroundColor(Colors.primary)])]);
-  let secondary =
-    merge([baseButtonStyles, style([backgroundColor(Colors.accentDark)])]);
+  let primary = merge([baseButtonStyles, "bg-primary"]);
+
+  let secondary = merge([baseButtonStyles, "bg-accent-dark"]);
 
   let button = variant =>
     switch (variant) {

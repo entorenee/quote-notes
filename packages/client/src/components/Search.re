@@ -6,12 +6,9 @@ module Styles = {
   let wrapper = style([width(fitContent)]);
 
   let inputOverrides: BaseInput.classNameOverrides = {
-    wrapper: Some(style([display(flexBox), flexDirection(column)])),
-    label: Some(style([marginBottom(rem(1.0))])),
+    wrapper: Some("flex flex-col"),
+    label: Some("mb-4"),
   };
-
-  let activeButton = isActive =>
-    style([backgroundColor(isActive ? pink : white)]);
 };
 
 let buttons = ["Title", "Author", "ISBN"];
@@ -37,7 +34,7 @@ let make = () => {
          button =>
            <BaseButton
              key=button
-             className={Styles.activeButton(active == button)}
+             className={active == button ? "bg-accent-dark" : ""}
              onClick={_evt => handleActive(button)}>
              {str(button)}
            </BaseButton>,

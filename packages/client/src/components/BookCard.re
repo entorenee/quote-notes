@@ -15,23 +15,6 @@ type props = {
   title: string,
 };
 
-module Styles = {
-  open Theme;
-
-  let wrapper = style([display(flexBox), flexDirection(column)]);
-
-  let image = style([alignSelf(flexStart)]);
-
-  let entries =
-    style([
-      textAlign(`right),
-      fontWeight(bold),
-      marginBottom(Spacer.sp03),
-    ]);
-
-  let entryButton = style([alignSelf(center)]);
-};
-
 [@react.component]
 let make = (~authors, ~className=?, ~entryCount, ~image, ~synopsis=?, ~title) => {
   let authorLabel =
@@ -41,30 +24,35 @@ let make = (~authors, ~className=?, ~entryCount, ~image, ~synopsis=?, ~title) =>
     | _ => Some("Authors: ")
     };
   <div
-    className={merge([
-      Styles.wrapper,
-      Belt.Option.getWithDefault(className, ""),
-    ])}>
-    {switch (image) {
-     | None => React.null
-     | Some({alt, src}) => <img className=Styles.image alt src />
-     }}
+    className={
+      merge(["flex flex-col", Belt.Option.getWithDefault(className, "")])
+    }>
+    {
+      switch (image) {
+      | None => React.null
+      | Some({alt, src}) => <img className="self-start" alt src />
+      }
+    }
     <BaseHeadline is=BaseHeadline.H3 variant=BaseHeadline.H4>
       {str(title)}
     </BaseHeadline>
-    {switch (authorLabel) {
-     | None => React.null
-     | Some(label) =>
-       <span> {str(label ++ stringConcat(", ", authors))} </span>
-     }}
-    {switch (synopsis) {
-     | None => React.null
-     | Some(text) => <p> {str(text)} </p>
-     }}
-    <div className=Styles.entries>
+    {
+      switch (authorLabel) {
+      | None => React.null
+      | Some(label) =>
+        <span> {str(label ++ stringConcat(", ", authors))} </span>
+      }
+    }
+    {
+      switch (synopsis) {
+      | None => React.null
+      | Some(text) => <p> {str(text)} </p>
+      }
+    }
+    <div className="text-right font-bold mb-6">
       {str("Total entries: " ++ string_of_int(entryCount))}
     </div>
-    <BaseButton className=Styles.entryButton onClick={_e => ()}>
+    <BaseButton className="self-center" onClick={_e => ()}>
       {str("Add new entry")}
     </BaseButton>
   </div>;

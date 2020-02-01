@@ -2,12 +2,6 @@ open ReactUtils;
 open Css;
 open Belt;
 
-module Styles = {
-  let label = style([marginRight(rem(1.0))]);
-
-  let input = style([padding2(~v=rem(0.5), ~h=rem(1.0))]);
-};
-
 type classNameOverrides = {
   wrapper: option(string),
   label: option(string),
@@ -45,15 +39,14 @@ let make =
 
   <div className={Option.getWithDefault(classNames.wrapper, "")}>
     <label
-      className={merge([
-        Styles.label,
-        Option.getWithDefault(classNames.label, ""),
-      ])}
+      className={
+        merge(["mr-4", Option.getWithDefault(classNames.label, "")])
+      }
       htmlFor=inputId>
       {str(labelText)}
     </label>
     <input
-      className=Styles.input
+      className="py-2 px-4"
       id=inputId
       onChange={evt => handleChange(evt)}
       required

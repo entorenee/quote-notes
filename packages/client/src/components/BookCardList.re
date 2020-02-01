@@ -2,13 +2,6 @@ module Styles = {
   open Css;
   open Theme;
 
-  let wrapper =
-    style([
-      display(flexBox),
-      flexDirection(column),
-      media(Media.md, [flexDirection(row), flexWrap(wrap)]),
-    ]);
-
   let card =
     style([
       margin2(~v=Spacer.sp04, ~h=zero),
@@ -26,20 +19,20 @@ module Styles = {
 
 [@react.component]
 let make = (~books) =>
-  <div className=Styles.wrapper>
+  <div className="flex flex-col md:flex-row md:flex-wrap">
     {List.map(
-       ({authors, entryCount, image, synopsis, title}: BookCard.props) =>
-         <BookCard
-           className=Styles.card
-           key=title
-           authors
-           entryCount
-           image
-           synopsis
-           title
-         />,
-       books,
-     )
-     ->Array.of_list
-     ->React.array}
+      ({authors, entryCount, image, synopsis, title}: BookCard.props) =>
+        <BookCard
+          className=Styles.card
+          key=title
+          authors
+          entryCount
+          image
+          synopsis
+          title
+        />,
+      books,
+    )
+    ->Array.of_list
+    ->React.array}
   </div>;
