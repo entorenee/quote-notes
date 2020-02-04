@@ -5,7 +5,7 @@ type variant =
 module Styles = {
   open Css;
 
-  let baseButtonStyles = "py-2 px-8 text-light text-xl";
+  let baseButtonStyles = "py-3 px-4 text-light text-xl";
 
   let primary = merge([baseButtonStyles, "bg-primary"]);
 

@@ -23,14 +23,14 @@ module Styles = {
 };
 
 [@react.component]
-let make = (~children, ~className=?, ~is, ~variant=?) =>
+let make = (~children, ~className="", ~is, ~variant=?) =>
   switch (is) {
   | H1 =>
     <h1
       className={
         merge([
-          Option.getWithDefault(variant, H1) -> Styles.headline,
-          Option.getWithDefault(className, ""),
+          Option.getWithDefault(variant, H1)->Styles.headline,
+          className,
         ])
       }>
       children
@@ -40,8 +40,8 @@ let make = (~children, ~className=?, ~is, ~variant=?) =>
       className={
         merge([
           Styles.h2,
-          Option.getWithDefault(variant, H2) -> Styles.headline,
-          Option.getWithDefault(className, ""),
+          Option.getWithDefault(variant, H2)->Styles.headline,
+          className,
         ])
       }>
       children
@@ -50,8 +50,8 @@ let make = (~children, ~className=?, ~is, ~variant=?) =>
     <h3
       className={
         merge([
-          Option.getWithDefault(variant, H3) -> Styles.headline,
-          Option.getWithDefault(className, ""),
+          Option.getWithDefault(variant, H3)->Styles.headline,
+          className,
         ])
       }>
       children
@@ -60,8 +60,8 @@ let make = (~children, ~className=?, ~is, ~variant=?) =>
     <h4
       className={
         merge([
-          Option.getWithDefault(variant, H4) -> Styles.headline,
-          Option.getWithDefault(className, ""),
+          Option.getWithDefault(variant, H4)->Styles.headline,
+          className,
         ])
       }>
       children

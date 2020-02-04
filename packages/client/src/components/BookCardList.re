@@ -20,19 +20,21 @@ module Styles = {
 [@react.component]
 let make = (~books) =>
   <div className="flex flex-col md:flex-row md:flex-wrap">
-    {List.map(
-      ({authors, entryCount, image, synopsis, title}: BookCard.props) =>
-        <BookCard
-          className=Styles.card
-          key=title
-          authors
-          entryCount
-          image
-          synopsis
-          title
-        />,
-      books,
-    )
-    ->Array.of_list
-    ->React.array}
+    {
+      List.map(
+        ({authors, entryCount, image, synopsis, title}: BookCard.props) =>
+          <BookCard
+            className=Styles.card
+            key=title
+            authors
+            entryCount
+            image
+            synopsis
+            title
+          />,
+        books,
+      )
+      |> Array.of_list
+      |> React.array
+    }
   </div>;

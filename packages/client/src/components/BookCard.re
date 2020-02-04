@@ -33,27 +33,31 @@ let make = (~authors, ~className=?, ~entryCount, ~image, ~synopsis=?, ~title) =>
       | Some({alt, src}) => <img className="self-start" alt src />
       }
     }
-    <BaseHeadline is=BaseHeadline.H3 variant=BaseHeadline.H4>
-      {str(title)}
+    <BaseHeadline
+      className="mt-4 mb-2" is=BaseHeadline.H3 variant=BaseHeadline.H4>
+      title->str
     </BaseHeadline>
     {
       switch (authorLabel) {
       | None => React.null
       | Some(label) =>
-        <span> {str(label ++ stringConcat(", ", authors))} </span>
+        <div className="mb-2">
+          <span className="font-semibold"> label->str </span>
+          {stringConcat(", ", authors) |> str}
+        </div>
       }
     }
     {
       switch (synopsis) {
       | None => React.null
-      | Some(text) => <p> {str(text)} </p>
+      | Some(text) => <p> text->str </p>
       }
     }
-    <div className="text-right font-bold mb-6">
-      {str("Total entries: " ++ string_of_int(entryCount))}
+    <div className="text-right font-bold mt-2 mb-6">
+      {"Total entries: " ++ string_of_int(entryCount) |> str}
     </div>
     <BaseButton className="self-center" onClick={_e => ()}>
-      {str("Add new entry")}
+      "Add new entry"->str
     </BaseButton>
   </div>;
 };
