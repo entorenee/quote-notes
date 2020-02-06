@@ -8,10 +8,10 @@ type level =
   | H4;
 
 module Styles = {
-  let h1 = "text-primary text-4xl sm:text-6xl";
-  let h2 = "text-primary text-3xl sm:text-5xl";
-  let h3 = "text-primary text-2xl sm:text-4xl";
-  let h4 = "text-primary text-xl sm:text-3xl";
+  let h1 = "text-blue-500 text-4xl sm:text-6xl";
+  let h2 = "text-blue-500 text-3xl sm:text-5xl";
+  let h3 = "text-blue-500 text-2xl sm:text-4xl";
+  let h4 = "text-blue-500 text-xl sm:text-3xl";
 
   let headline = variant =>
     switch (variant) {

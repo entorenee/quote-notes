@@ -30,18 +30,20 @@ let make = () => {
       placeholder="Search for books"
     />
     <div>
-      {List.map(
-         button =>
-           <BaseButton
-             key=button
-             className={active == button ? "bg-accent-dark" : ""}
-             onClick={_evt => handleActive(button)}>
-             {str(button)}
-           </BaseButton>,
-         buttons,
-       )
-       ->Array.of_list
-       ->React.array}
+      {
+        List.map(
+          button =>
+            <BaseButton
+              key=button
+              className={active == button ? "bg-pink-500" : ""}
+              onClick={_evt => handleActive(button)}>
+              {str(button)}
+            </BaseButton>,
+          buttons,
+        )
+        |> Array.of_list
+        |> React.array
+      }
     </div>
   </div>;
 };
