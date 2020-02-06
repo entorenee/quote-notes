@@ -1,5 +1,32 @@
 @tailwind base;
-
 @tailwind components;
+
+.btn {
+  @apply py-3 px-4;
+}
+
+.btn-primary-blue {
+  @apply text-white bg-blue-500;
+}
+
+.btn-primary-pink {
+  @apply text-white bg-pink-500;
+}
+
+.btn-secondary-blue {
+  @apply rounded border-4 bg-transparent border-blue-500 text-blue-500;
+}
+
+.btn-secondary-pink {
+  @apply rounded border-4 bg-transparent border-pink-500 text-pink-500;
+}
+
+.btn-tertiary-blue {
+  @apply font-semibold text-blue-500;
+}
+
+.btn-tertiary-pink {
+  @apply font-semibold text-pink-500;
+}
 
 @tailwind utilities;
