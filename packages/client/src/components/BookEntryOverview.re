@@ -68,9 +68,16 @@ let make =
       }
     }
     {
-      switch (synopsis) {
-      | None => React.null
-      | Some(text) => <p className="mb-6 md:max-w-xl"> text->str </p>
+      switch (state.synopsis, state.isEditing) {
+      | (None, false) => React.null
+      | (Some(text), false) =>
+        <p className="mb-6 md:max-w-xl"> text->str </p>
+      | (value, true) =>
+        <TextArea
+          className="text-black mb-6 md:max-w-xl"
+          onChange=(newText => dispatch(SetSynopsis(newText)))
+          value={Belt.Option.getWithDefault(value, "")}
+        />
       }
     }
     <div className="self-end mb-4">
