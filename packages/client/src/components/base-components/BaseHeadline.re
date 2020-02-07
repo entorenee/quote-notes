@@ -8,10 +8,10 @@ type level =
   | H4;
 
 module Styles = {
-  let h1 = "text-blue-500 text-4xl sm:text-6xl";
-  let h2 = "text-blue-500 text-3xl sm:text-5xl";
-  let h3 = "text-blue-500 text-2xl sm:text-4xl";
-  let h4 = "text-blue-500 text-xl sm:text-3xl";
+  let h1 = "text-4xl sm:text-6xl";
+  let h2 = "text-3xl sm:text-5xl";
+  let h3 = "text-2xl sm:text-4xl";
+  let h4 = "text-xl sm:text-3xl";
 
   let headline = variant =>
     switch (variant) {
@@ -23,13 +23,15 @@ module Styles = {
 };
 
 [@react.component]
-let make = (~children, ~className="", ~is, ~variant=?) =>
+let make =
+    (~children, ~className="", ~fontColor="text-blue-700", ~is, ~variant=?) =>
   switch (is) {
   | H1 =>
     <h1
       className={
         merge([
           Option.getWithDefault(variant, H1)->Styles.headline,
+          fontColor,
           className,
         ])
       }>
@@ -39,8 +41,8 @@ let make = (~children, ~className="", ~is, ~variant=?) =>
     <h2
       className={
         merge([
-          Styles.h2,
           Option.getWithDefault(variant, H2)->Styles.headline,
+          fontColor,
           className,
         ])
       }>
@@ -51,6 +53,7 @@ let make = (~children, ~className="", ~is, ~variant=?) =>
       className={
         merge([
           Option.getWithDefault(variant, H3)->Styles.headline,
+          fontColor,
           className,
         ])
       }>
@@ -61,6 +64,7 @@ let make = (~children, ~className="", ~is, ~variant=?) =>
       className={
         merge([
           Option.getWithDefault(variant, H4)->Styles.headline,
+          fontColor,
           className,
         ])
       }>
