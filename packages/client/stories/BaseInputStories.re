@@ -3,9 +3,9 @@ open BsStorybook.Action;
 
 let _module = [%bs.raw "module"];
 
-storiesOf("Input", _module)
+storiesOf("Inputs", _module)
 ->(
-    add("default", () => {
+    add("Input", () => {
       let onChange = action("Character typed");
 
       <BaseInput
@@ -18,4 +18,8 @@ storiesOf("Input", _module)
         value=""
       />;
     })
-  );
+  )
+->add("Text Area", () => {
+    let onChange = action("Character typed");
+    <TextArea value="My text area element" onChange />;
+  });
