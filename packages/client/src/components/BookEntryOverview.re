@@ -23,7 +23,7 @@ let make =
       ~className="",
       ~entryCount,
       ~rating,
-      ~synopsis=?,
+      ~synopsis: option(string),
       ~title,
     ) => {
   let initialState = {isEditing: false, rating, prevState: None, synopsis};
@@ -43,14 +43,18 @@ let make =
         },
       initialState,
     );
-  <div className="flex flex-col bg-neutral-100 px-6 pt-6">
+  <div
+    className={
+      Css.merge(["flex flex-col bg-blue-700 text-white px-6 pt-6", className])
+    }>
     <Rating
       className="self-end mb-3"
       isEditing={state.isEditing}
       value={state.rating}
       handleUpdate={newRating => dispatch(SetRating(newRating))}
     />
-    <BaseHeadline is=BaseHeadline.H4 className="mb-2">
+    <BaseHeadline
+      className="mb-2" fontColor="text-neutral-100" is=BaseHeadline.H2>
       title->str
     </BaseHeadline>
     {
@@ -66,7 +70,7 @@ let make =
     {
       switch (synopsis) {
       | None => React.null
-      | Some(text) => <p className="mb-6"> text->str </p>
+      | Some(text) => <p className="mb-6 md:max-w-xl"> text->str </p>
       }
     }
     <div className="self-end mb-4">
@@ -74,13 +78,15 @@ let make =
         switch (state.isEditing) {
         | false => React.null
         | true =>
-          <BaseButton onClick=(_ => dispatch(SaveEdits))>
+          <BaseButton
+            color=BaseButton.Pink onClick=(_ => dispatch(SaveEdits))>
             "Save Changes"->str
           </BaseButton>
         }
       }
       <BaseButton
         className="mr-3"
+        color=BaseButton.Pink
         variant=BaseButton.Tertiary
         onClick={_ => dispatch(state.isEditing ? CancelEdit : StartEdit)}>
         (state.isEditing ? "Cancel Edit" : "Edit")->str
@@ -94,7 +100,7 @@ let make =
         <BaseCard
           className="flex flex-col justify-center w-64 mx-auto bg-white -mb-16"
           shadowSize=BaseCard.Large>
-          <div className="self-center text-xl mb-3">
+          <div className="self-center text-xl text-black mb-3">
             <span className="font-semibold"> x->string_of_int->str </span>
             <span> entryStr->str </span>
           </div>

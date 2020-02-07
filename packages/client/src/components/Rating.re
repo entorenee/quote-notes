@@ -11,7 +11,7 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
     {
       List.map(
         ratingValue => {
-          let color = value >= ratingValue ? "text-pink-800" : "text-pink-400";
+          let color = value >= ratingValue ? "text-pink-600" : "text-pink-200";
           <button
             type_="button"
             disabled={!isEditing}
