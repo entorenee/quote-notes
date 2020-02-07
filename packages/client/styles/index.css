@@ -1,6 +1,10 @@
 @tailwind base;
 @tailwind components;
 
+body {
+  @apply bg-neutral-200;
+}
+
 .btn {
   @apply py-3 px-4;
 }
@@ -22,11 +26,11 @@
 }
 
 .btn-tertiary-blue {
-  @apply font-semibold text-blue-500;
+  @apply font-semibold text-blue-500 text-lg;
 }
 
 .btn-tertiary-pink {
-  @apply font-semibold text-pink-500;
+  @apply font-semibold text-pink-500 text-lg;
 }
 
 @tailwind utilities;
