@@ -11,3 +11,5 @@ let authorsLabel = authorCount =>
   | 1 => Some("Author:")
   | _ => Some("Authors:")
   };
+
+let commaSeparateList = String.concat(", ");
