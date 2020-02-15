@@ -2,7 +2,7 @@ type singleBook = {
   authors: list(string),
   id: string,
   entryCount: int,
-  rating: int,
+  rating: option(int),
   synopsis: option(string),
   title: string,
 };

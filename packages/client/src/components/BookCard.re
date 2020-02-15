@@ -1,4 +1,5 @@
 open ReactUtils;
+open Helpers;
 open Css;
 
 type image = {
@@ -43,7 +44,7 @@ let make = (~authors, ~className=?, ~entryCount, ~image, ~synopsis=?, ~title) =>
       | Some(label) =>
         <div className="mb-2">
           <span className="font-semibold"> label->str </span>
-          {stringConcat(", ", authors) |> str}
+          {authors |> commaSeparateList |> str}
         </div>
       }
     }
