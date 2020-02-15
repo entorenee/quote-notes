@@ -7,7 +7,7 @@
   "dependencies": {
     "auth0-js": "^9.11.3",
     "autoprefixer": "^9.7.4",
-    "bs-css": "^10.0.1",
+    "bs-css": "^11.0.0",
     "gatsby": "^2.15.20",
     "gatsby-image": "^2.2.20",
     "gatsby-plugin-manifest": "^2.2.18",
@@ -50,7 +50,7 @@
     "@types/reach__router": "^1.2.5",
     "@types/react": "^16.9.3",
     "babel-loader": "^8.0.6",
-    "bs-platform": "5.0.6",
+    "bs-platform": "7.1.0",
     "bs-storybook": "^0.3.0",
     "eslint-plugin-graphql": "^3.1.0",
     "prettier": "^1.18.2"
