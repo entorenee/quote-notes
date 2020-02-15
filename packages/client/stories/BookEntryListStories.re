@@ -27,7 +27,7 @@ let book: BookEntryList.singleBook = {
   authors,
   id: "123",
   entryCount: 12,
-  rating: 3,
+  rating: Some(3),
   synopsis,
   title: "The Scarlet Letter",
 };
@@ -40,7 +40,7 @@ storiesOf("Book Entry List", _module)
       authors
       bookId=123
       entryCount=12
-      rating=3
+      rating={Some(3)}
       synopsis
       title="The Scarlet Letter"
     />

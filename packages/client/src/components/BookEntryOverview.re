@@ -1,9 +1,11 @@
 open ReactUtils;
+open Helpers;
+open Belt.Option;
 
 type bookState = {
   isEditing: bool,
   prevState: option(bookState),
-  rating: int,
+  rating: option(int),
   synopsis: option(string),
 };
 
@@ -22,7 +24,7 @@ let make =
       ~bookId,
       ~className="",
       ~entryCount,
-      ~rating,
+      ~rating: option(int),
       ~synopsis: option(string),
       ~title,
     ) => {
@@ -33,12 +35,20 @@ let make =
         switch (action) {
         | StartEdit => {...state, isEditing: true, prevState: Some(state)}
         | CancelEdit => {
-            ...Belt.Option.getWithDefault(state.prevState, initialState),
+            ...getWithDefault(state.prevState, initialState),
             isEditing: false,
             prevState: None,
           }
-        | SaveEdits => {...state, isEditing: false, prevState: None}
-        | SetRating(rating) => {...state, rating}
+        | SaveEdits => {
+            ...state,
+            isEditing: false,
+            prevState: None,
+            rating: state.rating === Some(0) ? None : state.rating,
+          }
+        | SetRating(rating) => {
+            ...state,
+            rating: state.rating === Some(rating) ? Some(0) : Some(rating),
+          }
         | SetSynopsis(synopsis) => {...state, synopsis: Some(synopsis)}
         },
       initialState,
@@ -47,12 +57,18 @@ let make =
     className={
       Css.merge(["flex flex-col bg-blue-700 text-white px-6 pt-6", className])
     }>
-    <Rating
-      className="self-end mb-3"
-      isEditing={state.isEditing}
-      value={state.rating}
-      handleUpdate={newRating => dispatch(SetRating(newRating))}
-    />
+    {
+      switch (state.rating, state.isEditing) {
+      | (None, false) => React.null
+      | (value, _) =>
+        <Rating
+          className="self-end mb-3"
+          isEditing={state.isEditing}
+          value={getWithDefault(value, 0)}
+          handleUpdate=(newRating => dispatch(SetRating(newRating)))
+        />
+      }
+    }
     <BaseHeadline
       className="mb-2" fontColor="text-neutral-100" is=BaseHeadline.H2>
       title->str
@@ -63,7 +79,7 @@ let make =
       | Some(label) =>
         <div className="mb-6">
           <span className="font-semibold mr-2"> label->str </span>
-          {stringConcat(", ", authors) |> str}
+          {authors |> commaSeparateList |> str}
         </div>
       }
     }
@@ -76,7 +92,7 @@ let make =
         <TextArea
           className="text-black mb-6 md:max-w-xl"
           onChange=(newText => dispatch(SetSynopsis(newText)))
-          value={Belt.Option.getWithDefault(value, "")}
+          value={getWithDefault(value, "")}
         />
       }
     }
