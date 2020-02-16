@@ -11,7 +11,8 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
     {
       List.map(
         ratingValue => {
-          let color = value >= ratingValue ? "text-pink-600" : "text-pink-200";
+          let color =
+            value >= ratingValue ? "text-brown-400" : "text-brown-200";
           <button
             key={string_of_int(ratingValue)}
             type_="button"
@@ -19,7 +20,7 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
             onClick={_ => handleUpdate(ratingValue)}>
             <Icon
               name=Icon.Bookmark
-              className={merge(["fill-current w-4 mr-2 last:mr-0", color])}
+              className={merge(["fill-current w-5 mr-2 last:mr-0", color])}
             />
             <span className={isEditing ? "sr-only" : "hidden"}>
               ("Rate book as " ++ string_of_int(ratingValue) ++ " out of 5")
