@@ -6,6 +6,18 @@ type props = {
   title: string,
 };
 
+module Placeholder = {
+  [@react.component]
+  let make = (~className="") =>
+    <BaseCard className={Css.merge(["bg-white flex flex-col", className])}>
+      <div
+        className="bg-neutral-500 w-24 sm:w-32 h-6 mb-6 inline-block self-end rounded"
+      />
+      <div className="bg-neutral-700 w-40 sm:w-64 h-6 mb-6 rounded" />
+      <div className="bg-neutral-300 w-3/4 h-6 rounded" />
+    </BaseCard>;
+};
+
 [@react.component]
 let make = (~chapter, ~className="", ~notes, ~title) =>
   <BaseCard className={Css.merge(["bg-white", className])}>
