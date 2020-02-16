@@ -13,6 +13,7 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
         ratingValue => {
           let color = value >= ratingValue ? "text-pink-600" : "text-pink-200";
           <button
+            key={string_of_int(ratingValue)}
             type_="button"
             disabled={!isEditing}
             onClick={_ => handleUpdate(ratingValue)}>

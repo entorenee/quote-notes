@@ -25,8 +25,14 @@ let make = (~className="", ~entries) =>
         </>
       | _ =>
         List.map(
-          ({chapter, notes, title}: EntrySummary.props) =>
-            <EntrySummary chapter className="mb-6 last:mb-0" notes title />,
+          ({id, chapter, notes, title}: EntrySummary.t) =>
+            <EntrySummary
+              key=id
+              chapter
+              className="mb-6 last:mb-0"
+              notes
+              title
+            />,
           entries,
         )
         |> reactArray

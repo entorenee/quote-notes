@@ -1,6 +1,7 @@
 open ReactUtils;
 
-type props = {
+type t = {
+  id: string,
   chapter: option(string),
   notes: string,
   title: string,
