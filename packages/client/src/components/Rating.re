@@ -1,4 +1,5 @@
 open ReactUtils;
+open Belt;
 open Css;
 
 [@react.component]
@@ -20,7 +21,7 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
       setHighlightedValue(_ => value);
     };
 
-  let allowedRatings = [1, 2, 3, 4, 5];
+  let allowedRatings = [|1, 2, 3, 4, 5|];
   let bookRatingStr =
     "Book is rated as " ++ string_of_int(value) ++ " out of 5";
   <div
@@ -30,7 +31,8 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
     >
     <span className="sr-only"> bookRatingStr->str </span>
     {
-      List.map(
+      allowedRatings->
+      Array.map(
         ratingValue => {
           let color =
             highlightedValue >= ratingValue ?
@@ -52,10 +54,8 @@ let make = (~className="", ~handleUpdate, ~isEditing=false, ~value) => {
             </span>
           </button>;
         },
-        allowedRatings,
       )
-      |> Array.of_list
-      |> React.array
+      -> React.array
     }
   </div>;
 };

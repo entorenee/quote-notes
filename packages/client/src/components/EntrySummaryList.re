@@ -1,10 +1,11 @@
 open ReactUtils;
+open Belt;
 
 [@react.component]
 let make = (~className="", ~entries) =>
   <div className={Css.merge(["px-4 md:px-8", className])}>
     {
-      switch (List.length(entries)) {
+      switch (Array.length(entries)) {
       | 0 =>
         <>
           <EntrySummary.Placeholder />
@@ -24,18 +25,17 @@ let make = (~className="", ~entries) =>
           </div>
         </>
       | _ =>
-        List.map(
-          ({id, chapter, notes, title}: EntrySummary.t) =>
+        entries
+        ->Array.map(({id, chapter, notes, title}: EntrySummary.t) =>
             <EntrySummary
               key=id
               chapter
               className="mb-6 last:mb-0"
               notes
               title
-            />,
-          entries,
-        )
-        |> reactArray
+            />
+          )
+        ->React.array
       }
     }
   </div>;

@@ -1,3 +1,5 @@
+open Belt;
+
 module Styles = {
   open Css;
   open Theme;
@@ -21,8 +23,9 @@ module Styles = {
 let make = (~books) =>
   <div className="flex flex-col md:flex-row md:flex-wrap">
     {
-      List.map(
-        ({authors, entryCount, image, synopsis, title}: BookCard.props) =>
+      React.array(
+        Array.map(
+          books, ({authors, entryCount, image, synopsis, title}: BookCard.t) =>
           <BookCard
             className=Styles.card
             key=title
@@ -31,10 +34,8 @@ let make = (~books) =>
             image
             synopsis
             title
-          />,
-        books,
+          />
+        ),
       )
-      |> Array.of_list
-      |> React.array
     }
   </div>;

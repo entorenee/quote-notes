@@ -1,5 +1,5 @@
 open BsStorybook.Story;
-open List;
+open Helpers;
 let _module = [%bs.raw "module"];
 
 let addEntry = id => Js.log(id);
@@ -9,7 +9,7 @@ let synopsis =
     "Set in Puritan Massachusetts Bay Colony during the years 1642 to 1649, the novel tells the story of Hester Prynne who conceives a daughter through an affair and then struggles to create a new life of repentance and dignity. Containing a number of religious and historic allusions, the book explores themes of legalism, sin, and guilt.",
   );
 
-let cards: list(EntrySummary.t) = [
+let cards: array(EntrySummary.t) = [|
   {
     id: "1",
     chapter: Some("Chapter 1"),
@@ -23,7 +23,7 @@ let cards: list(EntrySummary.t) = [
     notes: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
   },
   {id: "3", chapter: None, title: "Chapter in Progress", notes: ""},
-];
+|];
 
 let book: BookEntryList.singleBook = {
   authors,
@@ -48,12 +48,12 @@ storiesOf("Book Entry List", _module)
     />
   )
 ->(
-    add("Entry Summary", () =>
-      <EntrySummary
-        chapter={hd(cards).chapter}
-        title={hd(cards).title}
-        notes={hd(cards).notes}
-      />
-    )
+    add("Entry Summary", () => {
+      let summary = arrHd(cards);
+      switch (summary) {
+      | None => React.null
+      | Some({chapter, title, notes}) => <EntrySummary chapter title notes />
+      };
+    })
   )
 ->(add("Entry Summary List", () => <EntrySummaryList entries=cards />));

@@ -1,4 +1,5 @@
 open ReactUtils;
+open Belt;
 
 module Styles = {
   open Css;
@@ -11,7 +12,7 @@ module Styles = {
   };
 };
 
-let buttons = ["Title", "Author", "ISBN"];
+let buttons = [|"Title", "Author", "ISBN"|];
 
 [@react.component]
 let make = () => {
@@ -31,18 +32,16 @@ let make = () => {
     />
     <div>
       {
-        List.map(
-          button =>
+        React.array(
+          Array.map(buttons, button =>
             <BaseButton
               key=button
               className={active == button ? "bg-pink-500" : ""}
               onClick={_evt => handleActive(button)}>
               {str(button)}
-            </BaseButton>,
-          buttons,
+            </BaseButton>
+          ),
         )
-        |> Array.of_list
-        |> React.array
       }
     </div>
   </div>;

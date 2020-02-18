@@ -2,7 +2,7 @@ open BsStorybook.Story;
 
 let _module = [%bs.raw "module"];
 
-let cards: list(BookCard.props) = [
+let cards: array(BookCard.t) = [|
   {
     authors: ["Nathaniel Hawthorne"],
     className: None,
@@ -35,7 +35,7 @@ let cards: list(BookCard.props) = [
     synopsis: "Lin-Manuel Miranda's groundbreaking musical Hamilton is as revolutionary as its subject, the poor kid from the Caribbean who fought the British, defended the Constitution, and helped to found the United States. Fusing hip-hop, pop, R&B, and the best traditions of theater, this once-in-a-generation show broadens the sound of Broadway, reveals the storytelling power of rap, and claims our country's origins for a diverse new generation.",
     title: "Hamilton: The Revolution",
   },
-];
+|];
 
 storiesOf("Book Card", _module)
 ->(

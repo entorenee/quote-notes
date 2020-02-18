@@ -1,3 +1,5 @@
+open Belt;
+
 let flatten = x =>
   switch (x) {
   | None => None
@@ -13,3 +15,5 @@ let authorsLabel = authorCount =>
   };
 
 let commaSeparateList = String.concat(", ");
+
+let arrHd = Array.get(_, 0);

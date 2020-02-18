@@ -7,7 +7,7 @@ type image = {
   src: string,
 };
 
-type props = {
+type t = {
   authors: list(string),
   className: option(string),
   entryCount: int,
