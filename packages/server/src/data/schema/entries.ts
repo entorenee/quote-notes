@@ -7,7 +7,6 @@ import {
   UserResolvers,
 } from '../../generated/graphql';
 import { EntryModel, NullableEntry } from '../models/types';
-import { updateFieldId } from '../user-methods';
 
 export const typeDefs = gql`
   type Entry {
@@ -89,7 +88,8 @@ export const resolvers: Resolvers = {
 
       return data.length ? data : null;
     },
-    entry: (_, { id }, { db: { Entry }}): Promise<NullableEntry> => Entry.findById(id).exec(),
+    entry: (_, { id }, { db: { Entry } }): Promise<NullableEntry> =>
+      Entry.findById(id).exec(),
   },
   Mutation: {
     createEntry: async (_, { input }, { db, user }): Promise<NullableEntry> => {
@@ -103,17 +103,14 @@ export const resolvers: Resolvers = {
 
       const entry = new db.Entry(data);
       const newEntry = await entry.save();
-      const { id: entryId } = newEntry;
-      await updateFieldId({
-        objectId: owner,
-        field: 'entries',
-        operator: '$push',
-        value: entryId,
-      });
 
       return newEntry;
     },
-    updateEntry: (_, { input }, { db, user }): Promise<NullableEntry> | null => {
+    updateEntry: (
+      _,
+      { input },
+      { db, user },
+    ): Promise<NullableEntry> | null => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -126,21 +123,14 @@ export const resolvers: Resolvers = {
 
       const { id: owner } = user;
 
-      await updateFieldId({
-        objectId: owner,
-        field: 'entries',
-        operator: '$pull',
-        value: id,
-      });
-
       const removed = await db.Entry.findOneAndRemove({ owner, _id: id });
       return removed !== null ? removed.id : null;
     },
   },
   User: {
-    entries: ({ entries }, _, { db: { Entry }}): Promise<NullableEntry[]> =>
+    entries: ({ id }, _, { db: { Entry } }): Promise<NullableEntry[]> =>
       Entry.find({
-        _id: { $in: entries },
+        owner: id,
       }).exec(),
   },
   Book: {
