@@ -6,7 +6,6 @@ import {
   QueryResolvers,
   UserResolvers,
 } from '../../generated/graphql';
-import Entry from '../models/entry';
 import { EntryModel, NullableEntry } from '../models/types';
 import { updateFieldId } from '../user-methods';
 
@@ -83,17 +82,17 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    myEntries: async (_, args, { user }): Promise<EntryModel[] | null> => {
+    myEntries: async (_, args, { db, user }): Promise<EntryModel[] | null> => {
       if (!user) return null;
 
-      const data = await Entry.find({ owner: user.id });
+      const data = await db.Entry.find({ owner: user.id });
 
       return data.length ? data : null;
     },
-    entry: (_, { id }): Promise<NullableEntry> => Entry.findById(id).exec(),
+    entry: (_, { id }, { db: { Entry }}): Promise<NullableEntry> => Entry.findById(id).exec(),
   },
   Mutation: {
-    createEntry: async (_, { input }, { user }): Promise<NullableEntry> => {
+    createEntry: async (_, { input }, { db, user }): Promise<NullableEntry> => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -102,7 +101,7 @@ export const resolvers: Resolvers = {
         owner,
       };
 
-      const entry = new Entry(data);
+      const entry = new db.Entry(data);
       const newEntry = await entry.save();
       const { id: entryId } = newEntry;
       await updateFieldId({
@@ -114,15 +113,15 @@ export const resolvers: Resolvers = {
 
       return newEntry;
     },
-    updateEntry: (_, { input }, { user }): Promise<NullableEntry> | null => {
+    updateEntry: (_, { input }, { db, user }): Promise<NullableEntry> | null => {
       if (!user) return null;
 
       const { id: owner } = user;
-      return Entry.findOneAndUpdate({ owner, _id: input.id }, input, {
+      return db.Entry.findOneAndUpdate({ owner, _id: input.id }, input, {
         new: true,
       }).exec();
     },
-    removeEntry: async (_, { id }, { user }): Promise<string | null> => {
+    removeEntry: async (_, { id }, { db, user }): Promise<string | null> => {
       if (!user) return null;
 
       const { id: owner } = user;
@@ -134,18 +133,18 @@ export const resolvers: Resolvers = {
         value: id,
       });
 
-      const removed = await Entry.findOneAndRemove({ owner, _id: id });
+      const removed = await db.Entry.findOneAndRemove({ owner, _id: id });
       return removed !== null ? removed.id : null;
     },
   },
   User: {
-    entries: ({ entries }): Promise<NullableEntry[]> =>
+    entries: ({ entries }, _, { db: { Entry }}): Promise<NullableEntry[]> =>
       Entry.find({
         _id: { $in: entries },
       }).exec(),
   },
   Book: {
-    entries: ({ id }, args, { user }): Promise<NullableEntry[]> =>
-      Entry.find({ book: id, owner: user.id }).exec(),
+    entries: ({ id }, args, { db, user }): Promise<NullableEntry[]> =>
+      db.Entry.find({ book: id, owner: user.id }).exec(),
   },
 };

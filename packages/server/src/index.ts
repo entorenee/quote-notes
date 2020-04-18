@@ -6,15 +6,14 @@ import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import mongoose from 'mongoose';
 
-import './data/models/author';
-import './data/models/book';
-import './data/models/entry';
-import './data/models/user';
+import Author from './data/models/author';
+import Book from './data/models/book';
+import Entry from './data/models/entry';
+import User from './data/models/user';
 
 dotenv.config();
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
-const User = mongoose.model('User');
 
 mongoose.set('useFindAndModify', false);
 mongoose.connect(DB_URL as string, { useNewUrlParser: true });
@@ -59,7 +58,15 @@ const server = new ApolloServer({
     require('./data/schema/isbn'),
   ],
   context: ({ req }: any) => {
-    return { user: req.user };
+    return {
+      db: {
+        Author,
+        Book,
+        Entry,
+        User,
+      },
+      user: req.user,
+    };
   },
 });
 server.applyMiddleware({ app });

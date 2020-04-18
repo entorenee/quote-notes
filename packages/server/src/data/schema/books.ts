@@ -7,7 +7,6 @@ import {
   QueryResolvers,
   UserResolvers,
 } from '../../generated/graphql';
-import Book from '../models/book';
 import { NullableBook, NullableUser } from '../models/types';
 import addToMyBooks from '../controllers/add-to-my-books';
 import removeMyBook from '../controllers/remove-my-book';
@@ -72,8 +71,10 @@ interface Resolvers {
 
 export const resolvers: Resolvers = {
   Query: {
-    allBooks: (): Promise<NullableBook[]> => Book.find({}).exec(),
-    book: (_, { id }): Promise<NullableBook> => Book.findById(id).exec(),
+    allBooks: (_, __, { db: { Book } }): Promise<NullableBook[]> =>
+      Book.find({}).exec(),
+    book: (_, { id }, { db: { Book } }): Promise<NullableBook> =>
+      Book.findById(id).exec(),
   },
   Mutation: {
     addToMyBooks: (_, { isbn }, { user }): Promise<NullableBook> => {
@@ -83,18 +84,23 @@ export const resolvers: Resolvers = {
       removeMyBook(id, user),
   },
   User: {
-    books: ({ books }): Promise<NullableBook[]> =>
+    books: ({ books }, _, { db: { Book } }): Promise<NullableBook[]> =>
       Book.find({
         _id: { $in: books },
       }).exec(),
   },
   Author: {
-    booksWritten: ({ booksWritten }): Promise<NullableBook[]> =>
+    booksWritten: (
+      { booksWritten },
+      _,
+      { db: { Book } },
+    ): Promise<NullableBook[]> =>
       Book.find({
         _id: { $in: booksWritten },
       }).exec(),
   },
   Entry: {
-    book: ({ book: id }): Promise<NullableBook> => Book.findById(id).exec(),
+    book: ({ book: id }, _, { db: { Book } }): Promise<NullableBook> =>
+      Book.findById(id).exec(),
   },
 };

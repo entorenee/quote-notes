@@ -7,7 +7,6 @@ import {
   QueryResolvers,
   UserResolvers,
 } from '../../generated/graphql';
-import User from '../models/user';
 import { NullableBook, NullableUser } from '../models/types';
 import dateTime from './custom-scalars/date-time';
 
@@ -63,19 +62,20 @@ export const resolvers: Resolvers = {
   // @ts-ignore
   DateTime: dateTime,
   Entry: {
-    owner: ({ owner: id }): Promise<NullableUser> => User.findById(id).exec(),
+    owner: ({ owner: id }, _, { db: { User } }): Promise<NullableUser> =>
+      User.findById(id).exec(),
   },
   Query: {
-    me: (_, args, { user }): Promise<NullableUser> | null => {
+    me: (_, args, { db, user }): Promise<NullableUser> | null => {
       if (user) {
-        return User.findOne({ sub: user.sub }).exec();
+        return db.User.findOne({ sub: user.sub }).exec();
       }
 
       return null;
     },
-    myBooks: async (_, args, { user }): Promise<NullableBook[] | null> => {
+    myBooks: async (_, args, { db, user }): Promise<NullableBook[] | null> => {
       if (user) {
-        const data = await User.findById(user.id, 'books')
+        const data = await db.User.findById(user.id, 'books')
           .populate('books')
           .exec();
         return data ? data.books : null;
@@ -85,9 +85,9 @@ export const resolvers: Resolvers = {
     },
   },
   Mutation: {
-    updateUser: (_, { user }): Promise<NullableUser> | null => {
+    updateUser: (_, { user }, { db }): Promise<NullableUser> | null => {
       if (user) {
-        return User.findOneAndUpdate({ sub: user.sub }, user, {
+        return db.User.findOneAndUpdate({ sub: user.sub }, user, {
           upsert: true,
           new: true,
         }).exec();
