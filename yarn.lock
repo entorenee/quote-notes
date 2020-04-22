@@ -1805,6 +1805,14 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
+"@nexus/schema@^0.13.1":
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/@nexus/schema/-/schema-0.13.1.tgz#02dadf66b121b3c270659479f2410b7023fcc4a6"
+  integrity sha512-V7fFhkPOcqQ7KwSaAkfSTAV/klY/NlL7aIHTuEZynAUNm2cG8S6QSU+TuVlbpj0L14B9tqgPrVeO+IOe0AV+yA==
+  dependencies:
+    iterall "^1.2.2"
+    tslib "^1.9.3"
+
 "@nodelib/fs.scandir@2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.2.tgz#1f981cd5b83e85cfdeb386fc693d4baab392fa54"
