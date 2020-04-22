@@ -1,106 +1,99 @@
-import { gql } from 'apollo-server-express';
+import {
+  idArg,
+  mutationField,
+  objectType,
+  stringArg,
+  queryField,
+} from '@nexus/schema';
 
 import {
-  AuthorResolvers,
-  EntryResolvers,
-  MutationResolvers,
-  QueryResolvers,
-  UserResolvers,
-} from '../../generated/graphql';
-import { NullableBook, NullableUser } from '../models/types';
-import addToMyBooks from '../controllers/add-to-my-books';
-import removeMyBook from '../controllers/remove-my-book';
+  AuthorModel,
+  BookModel,
+  EntryModel,
+  NullableBook,
+  NullableUser,
+} from '../models/types';
+import addToMyBooksFn from '../controllers/add-to-my-books';
+import removeMyBookFn from '../controllers/remove-my-book';
+import { NodeType } from './shared';
 
-export const typeDefs = gql`
-  type Book {
-    id: ID!
-    """
-    ISBN number of the book
-    """
-    isbn: String
-    """
-    Date of first publication
-    """
-    publishedDate: DateTime
-    """
-    Synopsis of the book
-    """
-    synopsis: String
-    """
-    Book's title
-    """
-    title: String!
-  }
-
-  extend type User {
-    """
-    A user's collection of books to take notes on
-    """
-    books: [Book]
-  }
-
-  extend type Author {
-    """
-    Other books written by the author and also stored in the database
-    """
-    booksWritten: [Book]
-  }
-
-  extend type Entry {
-    book: Book
-  }
-
-  extend type Query {
-    allBooks: [Book]
-    book(id: ID!): Book
-  }
-
-  extend type Mutation {
-    addToMyBooks(isbn: String!): Book
-    removeMyBook(id: ID!): User
-  }
-`;
-
-interface Resolvers {
-  Author: AuthorResolvers;
-  Entry: EntryResolvers;
-  Mutation: MutationResolvers;
-  User: UserResolvers;
-  Query: QueryResolvers;
-}
-
-export const resolvers: Resolvers = {
-  Query: {
-    allBooks: (_, __, { db: { Book } }): Promise<NullableBook[]> =>
-      Book.find({}).exec(),
-    book: (_, { id }, { db: { Book } }): Promise<NullableBook> =>
-      Book.findById(id).exec(),
+export const Book = objectType({
+  name: 'Book',
+  definition(t) {
+    t.implements(NodeType);
+    t.string('isbn', {
+      description: 'ISBN number of the book',
+      nullable: true,
+    });
+    t.date('publishedDate', {
+      description: 'Date of first publication',
+      nullable: true,
+    });
+    t.string('synopsis', {
+      description: 'Synopsis of the book',
+      nullable: true,
+    });
+    t.string('title', {
+      description: 'Title of the Book',
+    });
+    t.list.field('authors', {
+      type: 'Author',
+      description: 'A list of authors for a given book',
+      // @ts-ignore
+      resolve({ authors }, _, { db }): Promise<AuthorModel[]> {
+        return db.Author.find({
+          _id: { $in: authors },
+        }).exec();
+      },
+    });
+    t.list.field('entries', {
+      type: 'Entry',
+      description: `A user's entries on the given Book`,
+      resolve({ id }, args, { db, user }): Promise<EntryModel[]> {
+        return db.Entry.find({ book: id, owner: user.id }).exec();
+      },
+    });
   },
-  Mutation: {
-    addToMyBooks: (_, { isbn }, { user }): Promise<NullableBook> => {
-      return addToMyBooks(isbn, user);
-    },
-    removeMyBook: (_, { id }, { user }): Promise<NullableUser> =>
-      removeMyBook(id, user),
+});
+
+export const allBooks = queryField('allBooks', {
+  type: Book,
+  nullable: true,
+  list: true,
+  resolve(_, __, { db }): Promise<BookModel[]> {
+    return db.Book.find({}).exec();
   },
-  User: {
-    books: ({ books }, _, { db: { Book } }): Promise<NullableBook[]> =>
-      Book.find({
-        _id: { $in: books },
-      }).exec(),
+});
+
+export const book = queryField('book', {
+  type: Book,
+  nullable: true,
+  args: {
+    id: stringArg({ required: true }),
   },
-  Author: {
-    booksWritten: (
-      { booksWritten },
-      _,
-      { db: { Book } },
-    ): Promise<NullableBook[]> =>
-      Book.find({
-        _id: { $in: booksWritten },
-      }).exec(),
+  resolve(_, { id }, { db }): Promise<NullableBook> {
+    return db.Book.findById(id).exec();
   },
-  Entry: {
-    book: ({ book: id }, _, { db: { Book } }): Promise<NullableBook> =>
-      Book.findById(id).exec(),
+});
+
+export const addToMyBooks = mutationField('addToMyBooks', {
+  type: Book,
+  nullable: true,
+  args: {
+    isbn: stringArg({ required: true }),
   },
-};
+  resolve(_, { isbn }, { user }): Promise<NullableBook> {
+    return addToMyBooksFn(isbn, user);
+  },
+});
+
+export const removeMyBook = mutationField('removeMyBook', {
+  type: 'User',
+  nullable: true,
+  args: {
+    id: idArg({ required: true }),
+  },
+  resolve(_, { id }, { user }): Promise<NullableUser> {
+    return removeMyBookFn(id, user);
+  },
+});

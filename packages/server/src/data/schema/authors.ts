@@ -1,43 +1,43 @@
-import { gql } from 'apollo-server-express';
+import { objectType, stringArg, queryField } from '@nexus/schema';
 
-import { BookResolvers, QueryResolvers } from '../../generated/graphql';
-import { NullableAuthor } from '../models/types';
+import { AuthorModel, BookModel, NullableAuthor } from '../models/types';
+import { NodeType } from './shared';
 
-export const typeDefs = gql`
-  type Author {
-    id: ID!
-    name: String!
-  }
-
-  extend type Book {
-    """
-    A list of authors for a given book
-    """
-    authors: [Author]
-  }
-
-  extend type Query {
-    allAuthors: [Author]
-    author(id: ID!): Author
-  }
-`;
-
-interface Resolvers {
-  Book: BookResolvers;
-  Query: QueryResolvers;
-}
-
-export const resolvers: Resolvers = {
-  Query: {
-    allAuthors: (_, __, { db: { Author } }): Promise<NullableAuthor[]> =>
-      Author.find({}).exec(),
-    author: (_, { id }, { db: { Author } }): Promise<NullableAuthor> =>
-      Author.findById(id).exec(),
+export const Author = objectType({
+  name: 'Author',
+  definition(t) {
+    t.implements(NodeType);
+    t.string('name');
+    t.list.field('booksWritten', {
+      type: 'Book',
+      description:
+        'Other books written by the author and also stored in the database',
+      // @ts-ignore
+      resolve({ booksWritten }, _, { db }): Promise<BookModel[]> {
+        return db.Book.find({
+          _id: { $in: booksWritten },
+        }).exec();
+      },
+    });
   },
-  Book: {
-    authors: ({ authors }, _, { db: { Author } }): Promise<NullableAuthor[]> =>
-      Author.find({
-        _id: { $in: authors },
-      }).exec(),
+});
+
+export const allAuthors = queryField('allAuthors', {
+  type: Author,
+  nullable: true,
+  list: true,
+  resolve(_, __, { db }): Promise<AuthorModel[]> {
+    return db.Author.find({}).exec();
   },
-};
+});
+
+export const author = queryField('author', {
+  type: Author,
+  nullable: true,
+  args: {
+    id: stringArg({ required: true }),
+  },
+  resolve(_, { id }, { db }): Promise<NullableAuthor> {
+    return db.Author.findById(id).exec();
+  },
+});
