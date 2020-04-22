@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 
 import { ISBNBook, RawAuthorResponse, RawAuthorsResponse } from './types';
 
-const { ISBN_AUTH } = process.env;
 const BASE_URL = 'https://api2.isbndb.com';
 
 const fetchIsbn = async (url: string) => {
+  const { ISBN_AUTH } = process.env;
   const response = await fetch(`${BASE_URL}/${url}`, {
     method: 'GET',
     headers: {
