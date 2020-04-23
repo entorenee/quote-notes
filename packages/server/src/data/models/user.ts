@@ -15,12 +15,6 @@ const userSchema: Schema = new Schema({
     type: Date,
     default: Date.now(),
   },
-  entries: [
-    {
-      type: ObjectId,
-      ref: 'Entry',
-    },
-  ],
   name: String,
   picture: String,
   sub: {

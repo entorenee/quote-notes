@@ -1,99 +1,101 @@
-import { gql } from 'apollo-server-express';
-
+/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
-  DateTimeScalarConfig,
-  EntryResolvers,
-  MutationResolvers,
-  QueryResolvers,
-  UserResolvers,
-} from '../../generated/graphql';
-import User from '../models/user';
-import { NullableBook, NullableUser } from '../models/types';
-import dateTime from './custom-scalars/date-time';
+  arg,
+  mutationField,
+  inputObjectType,
+  objectType,
+  queryField,
+} from '@nexus/schema';
 
-export const typeDefs = gql`
-  scalar DateTime
+import { BookModel, EntryModel, NullableUser } from '../models/types';
+import { NodeType } from './shared';
 
-  type User {
-    id: ID!
-    """
-    User's name from oAuth provider
-    """
-    name: String
-    """
-    User's profile image from oAuth provider
-    """
-    picture: String
-    """
-    Unique oAuth identifier
-    """
-    sub: String!
-  }
-
-  input UserInput {
-    name: String
-    picture: String
-    sub: String!
-  }
-
-  extend type Entry {
-    owner: User
-  }
-
-  extend type Query {
-    me: User
-    myBooks: [Book]
-  }
-
-  extend type Mutation {
-    updateUser(user: UserInput!): User
-  }
-`;
-
-interface Resolvers {
-  DateTime: DateTimeScalarConfig;
-  Entry: EntryResolvers;
-  Mutation: MutationResolvers;
-  Query: QueryResolvers;
-  User: UserResolvers;
-}
-
-export const resolvers: Resolvers = {
-  // eslint-disable-next-line
-  // @ts-ignore
-  DateTime: dateTime,
-  Entry: {
-    owner: ({ owner: id }): Promise<NullableUser> => User.findById(id).exec(),
-  },
-  Query: {
-    me: (_, args, { user }): Promise<NullableUser> | null => {
-      if (user) {
-        return User.findOne({ sub: user.sub }).exec();
-      }
-
-      return null;
-    },
-    myBooks: async (_, args, { user }): Promise<NullableBook[] | null> => {
-      if (user) {
-        const data = await User.findById(user.id, 'books')
-          .populate('books')
-          .exec();
-        return data ? data.books : null;
-      }
-
-      return null;
-    },
-  },
-  Mutation: {
-    updateUser: (_, { user }): Promise<NullableUser> | null => {
-      if (user) {
-        return User.findOneAndUpdate({ sub: user.sub }, user, {
-          upsert: true,
-          new: true,
+export const User = objectType({
+  name: 'User',
+  definition(t) {
+    t.implements(NodeType);
+    t.string('name', {
+      description: `User's name from oAuth provider`,
+      nullable: true,
+    });
+    t.string('picture', {
+      description: `User's profile image from oAuth provider`,
+      nullable: true,
+    });
+    t.string('sub', { description: 'Unique oAuth provider' });
+    t.list.field('books', {
+      type: 'Book',
+      description: `A user's collection of books to take notes on`,
+      // @ts-ignore
+      resolve({ books }, _, { db }): Promise<BookModel[]> {
+        return db.Book.find({
+          _id: { $in: books },
         }).exec();
-      }
-
-      return null;
-    },
+      },
+    });
+    t.list.field('entries', {
+      type: 'Entry',
+      description: `A user's stored entries`,
+      resolve({ id }, _, { db }): Promise<EntryModel[]> {
+        return db.Entry.find({
+          owner: id,
+        }).exec();
+      },
+    });
   },
-};
+});
+
+export const UserInput = inputObjectType({
+  name: 'UserInput',
+  definition(t) {
+    t.string('name');
+    t.string('picture');
+    t.string('sub', { required: true });
+  },
+});
+
+export const me = queryField('me', {
+  type: User,
+  nullable: true,
+  resolve(_, args, { db, user }): Promise<NullableUser> | null {
+    if (user) {
+      return db.User.findOne({ sub: user.sub }).exec();
+    }
+
+    return null;
+  },
+});
+
+export const myBooks = queryField('myBooks', {
+  type: 'Book',
+  list: true,
+  nullable: true,
+  resolve: async (_, args, { db, user }): Promise<BookModel[] | null> => {
+    if (user) {
+      const data = await db.User.findById(user.id, 'books')
+        .populate('books')
+        .exec();
+      return data ? data.books : null;
+    }
+
+    return null;
+  },
+});
+
+export const updateUser = mutationField('updateUser', {
+  type: User,
+  nullable: true,
+  args: {
+    user: arg({ type: UserInput, required: true }),
+  },
+  resolve: (_, { user }, { db }): Promise<NullableUser> | null => {
+    if (user) {
+      return db.User.findOneAndUpdate({ sub: user.sub }, user, {
+        upsert: true,
+        new: true,
+      }).exec();
+    }
+
+    return null;
+  },
+});

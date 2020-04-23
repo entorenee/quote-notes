@@ -1,20 +1,22 @@
-/*tslint:disable no-var-requires */
+import path from 'path';
+
 import { ApolloServer } from 'apollo-server-express';
+import { makeSchema } from '@nexus/schema';
 import dotenv from 'dotenv';
 import express, { NextFunction, Request, Response } from 'express';
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import mongoose from 'mongoose';
 
-import './data/models/author';
-import './data/models/book';
-import './data/models/entry';
-import './data/models/user';
+import * as types from './data/schema';
+import Author from './data/models/author';
+import Book from './data/models/book';
+import Entry from './data/models/entry';
+import User from './data/models/user';
 
 dotenv.config();
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
-const User = mongoose.model('User');
 
 mongoose.set('useFindAndModify', false);
 mongoose.connect(DB_URL as string, { useNewUrlParser: true });
@@ -50,16 +52,26 @@ const fetchUserId = async (req: Request, res: Response, next: NextFunction) => {
 const app = express();
 app.use('*', checkJwt, fetchUserId);
 
+const schema = makeSchema({
+  types,
+  outputs: {
+    schema: path.join(__dirname, 'generated/generated-schema.graphql'),
+    typegen: path.join(__dirname, 'generated/nexus-types.gen.ts'),
+  },
+});
+
 const server = new ApolloServer({
-  modules: [
-    require('./data/schema/users'),
-    require('./data/schema/entries'),
-    require('./data/schema/authors'),
-    require('./data/schema/books'),
-    require('./data/schema/isbn'),
-  ],
+  schema,
   context: ({ req }: any) => {
-    return { user: req.user };
+    return {
+      db: {
+        Author,
+        Book,
+        Entry,
+        User,
+      },
+      user: req.user,
+    };
   },
 });
 server.applyMiddleware({ app });
