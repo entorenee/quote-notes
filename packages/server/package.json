@@ -6,7 +6,6 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "generate": "graphql-codegen --config codegen.yml",
     "type-check": "tsc -w"
   },
   "dependencies": {
@@ -22,10 +21,6 @@
     "nodemon": "^1.18.9"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.7.0",
-    "@graphql-codegen/introspection": "1.7.0",
-    "@graphql-codegen/typescript": "1.7.0",
-    "@graphql-codegen/typescript-resolvers": "1.7.0",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^4.16.0",
     "@types/graphql": "^14.0.4",

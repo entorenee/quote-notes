@@ -55,8 +55,8 @@ app.use('*', checkJwt, fetchUserId);
 const schema = makeSchema({
   types,
   outputs: {
-    schema: path.join(__dirname, 'generated-schema.graphql'),
-    typegen: path.join(__dirname, 'nexus-types.gen.ts'),
+    schema: path.join(__dirname, 'generated/generated-schema.graphql'),
+    typegen: path.join(__dirname, 'generated/nexus-types.gen.ts'),
   },
 });
 
