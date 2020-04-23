@@ -30,5 +30,6 @@ export const DateScalar = scalarType({
 // Nexus requires a base Query to extend from. Logic for queries are with related types
 export const Query = objectType({
   name: 'Query',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   definition() {},
 });

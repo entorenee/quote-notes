@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
   idArg,
   mutationField,

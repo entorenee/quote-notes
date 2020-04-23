@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import { objectType, stringArg, queryField } from '@nexus/schema';
 
 import { AuthorModel, BookModel, NullableAuthor } from '../models/types';
