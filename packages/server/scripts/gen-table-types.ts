@@ -5,7 +5,7 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import knex from 'knex';
 import { format } from 'prettier';
-import { pascalize } from 'humps';
+import { camelize, pascalize } from 'humps';
 import sqlts, { Config } from '@rmp135/sql-ts';
 
 dotenv.config();
@@ -38,10 +38,13 @@ const generateTypes = async (): Promise<void> => {
     .from('information_schema.tables')
     .where('table_schema', 'public');
   const tables = rows
-    .map(({ table_name: name }): string => `'${pascalize(name)}'`)
+    .map(
+      ({ table_name: name }): string =>
+        `${camelize(name)}: ${pascalize(name)}Entity`,
+    )
     .filter((table): boolean => !table.includes('Knex'))
     .sort()
-    .join(' | ');
+    .join(';');
   db.destroy();
 
   const definitions = await sqlts.toObject(dbConfig);
@@ -53,7 +56,11 @@ const generateTypes = async (): Promise<void> => {
       `
     ${tsString}
 
-    export type DbTables = ${tables}
+    export interface DbTables {
+      ${tables}
+    }
+
+    export type DbTableNames = Extract<keyof DbTables, string>
     `,
       { parser: 'typescript', singleQuote: true },
     ),

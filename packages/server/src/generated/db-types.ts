@@ -54,10 +54,13 @@ export interface AuthorsEntity {
   name: string;
 }
 
-export type DbTables =
-  | 'Authors'
-  | 'BooksAuthors'
-  | 'Entries'
-  | 'IsbnBooks'
-  | 'UserBooks'
-  | 'Users';
+export interface DbTables {
+  authors: AuthorsEntity;
+  booksAuthors: BooksAuthorsEntity;
+  entries: EntriesEntity;
+  isbnBooks: IsbnBooksEntity;
+  userBooks: UserBooksEntity;
+  users: UsersEntity;
+}
+
+export type DbTableNames = Extract<keyof DbTables, string>;
