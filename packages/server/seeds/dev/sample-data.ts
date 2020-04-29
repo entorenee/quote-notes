@@ -16,16 +16,27 @@ const isbnBooks = [
     isbn10: '1234',
     isbn13: '324324',
   },
+  {
+    id: 'c3f375b5-f5a3-4a01-8296-2805b4979eab',
+    title: 'The Scarlet Letter',
+    isbn10: '1234567',
+    isbn13: '32432434234',
+  },
 ];
 
 const authors = [
   { id: 'd6b6a26e-dc9e-4583-9109-27cc55727dc0', name: 'Charles Dickens' },
+  { id: 'd874295a-671e-43db-a16c-9580c1d5f28a', name: 'Nathaniel Hawthorne' },
 ];
 
 const bookAuthors = [
   {
     author_id: 'd6b6a26e-dc9e-4583-9109-27cc55727dc0',
     book_id: '32f9b12b-023b-47bd-a06e-b62affaa8b3f',
+  },
+  {
+    author_id: 'd874295a-671e-43db-a16c-9580c1d5f28a',
+    book_id: 'c3f375b5-f5a3-4a01-8296-2805b4979eab',
   },
 ];
 
@@ -35,6 +46,12 @@ const usersBooks = [
     isbn_book_id: '32f9b12b-023b-47bd-a06e-b62affaa8b3f',
     user_id: 'a6a7c4f4-40d5-41c8-9f6f-6ecbf053c31c',
     rating: 3,
+  },
+  {
+    id: 'c5206512-b9af-4b4a-96a2-4102fa8b3480',
+    isbn_book_id: 'c3f375b5-f5a3-4a01-8296-2805b4979eab',
+    user_id: 'a6a7c4f4-40d5-41c8-9f6f-6ecbf053c31c',
+    rating: 4,
   },
 ];
 
@@ -46,6 +63,13 @@ const entries = [
     title: 'My first note',
     notes: 'Here are some sample notes on a book. \n This book is tolerable',
   },
+  {
+    id: 'fa81f4b7-5551-42c7-aad6-1896333ab9b1',
+    user_book_id: 'c5206512-b9af-4b4a-96a2-4102fa8b3480',
+    user_id: 'a6a7c4f4-40d5-41c8-9f6f-6ecbf053c31c',
+    title: 'I love this book',
+    notes: 'This book is an excellent treatise on culture and life when religion dictates laws of societies',
+  }
 ];
 
 export async function seed(knex: Knex): Promise<any> {
