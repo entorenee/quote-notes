@@ -7,13 +7,9 @@ import {
   queryField,
 } from '@nexus/schema';
 
-import {
-  AuthorModel,
-  BookModel,
-  EntryModel,
-  NullableBook,
-  NullableUser,
-} from '../models/types';
+import { AuthorsEntity, EntriesEntity } from '../../generated/db-types';
+
+import { NullableBook, NullableUser } from '../models/types';
 import addToMyBooksFn from '../controllers/add-to-my-books';
 import removeMyBookFn from '../controllers/remove-my-book';
 import { BookBase, NodeType, Timestamps } from './shared';
@@ -44,40 +40,28 @@ export const UserBook = objectType({
     t.list.field('authors', {
       type: 'Author',
       description: 'A list of authors for a given book',
-      // @ts-ignore
-      resolve({ authors }, _, { db }): Promise<AuthorModel[]> {
-        return db.Author.find({
-          _id: { $in: authors },
-        }).exec();
+      resolve({ id }, _, { author }): Promise<AuthorsEntity[]> {
+        return author.authors(id);
       },
     });
     t.list.field('entries', {
       type: 'Entry',
       description: `A user's entries on the given Book`,
-      resolve({ id }, args, { db, user }): Promise<EntryModel[]> {
-        return db.Entry.find({ book: id, owner: user.id }).exec();
+      resolve({ id }, args, { entry }): Promise<EntriesEntity[]> {
+        return entry.byBookId(id);
       },
     });
   },
 });
 
-export const allBooks = queryField('allBooks', {
-  type: UserBook,
-  nullable: true,
-  list: true,
-  resolve(_, __, { db }): Promise<BookModel[]> {
-    return db.Book.find({}).exec();
-  },
-});
-
-export const book = queryField('book', {
+export const book = queryField('userBook', {
   type: UserBook,
   nullable: true,
   args: {
     id: stringArg({ required: true }),
   },
-  resolve(_, { id }, { db }): Promise<NullableBook> {
-    return db.Book.findById(id).exec();
+  resolve(_, { id }, ctx): Promise<NullableBook> {
+    return ctx.book.userBookById(id);
   },
 });
 

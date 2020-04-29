@@ -8,6 +8,9 @@ import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
 import mongoose from 'mongoose';
 
+import knex from './utils/knex-instance';
+import Context from './data-sources/context';
+
 import * as types from './data/schema';
 import Author from './data/models/author';
 import Book from './data/models/book';
@@ -15,6 +18,8 @@ import Entry from './data/models/entry';
 import User from './data/models/user';
 
 dotenv.config();
+
+const temp = new Context(knex(), 'oAuth:sample');
 
 const { AUTH0_DOMAIN, DB_URL } = process.env;
 
@@ -33,24 +38,8 @@ const checkJwt = jwt({
   }),
 });
 
-const fetchUserId = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user || !req.user.sub) return next();
-
-  const user = await User.findOne({ sub: req.user.sub });
-
-  if (user) {
-    const { id } = user;
-    // eslint-disable-next-line require-atomic-updates
-    req.user = {
-      ...req.user,
-      id,
-    };
-  }
-  return next();
-};
-
 const app = express();
-app.use('*', checkJwt, fetchUserId);
+app.use('*', checkJwt);
 
 const schema = makeSchema({
   types,
@@ -63,15 +52,7 @@ const schema = makeSchema({
 const server = new ApolloServer({
   schema,
   context: ({ req }: any) => {
-    return {
-      db: {
-        Author,
-        Book,
-        Entry,
-        User,
-      },
-      user: req.user,
-    };
+    return new Context(knex(), req.user ? req.user.sub : null);
   },
 });
 server.applyMiddleware({ app });

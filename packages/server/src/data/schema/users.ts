@@ -7,7 +7,8 @@ import {
   queryField,
 } from '@nexus/schema';
 
-import { BookModel, EntryModel, NullableUser } from '../models/types';
+import { EntriesEntity, UsersEntity } from '../../generated/db-types';
+import { BookModel } from '../models/types';
 import { NodeType, Timestamps } from './shared';
 
 export const User = objectType({
@@ -23,20 +24,15 @@ export const User = objectType({
       // @ts-ignore
       type: 'UserBook',
       description: `A user's collection of books to take notes on`,
-      // @ts-ignore
-      resolve({ books }, _, { db }): Promise<BookModel[]> {
-        return db.Book.find({
-          _id: { $in: books },
-        }).exec();
+      resolve({ id }, _, { book }): Promise<BookModel[]> {
+        return book.userBooks(id);
       },
     });
     t.list.field('entries', {
       type: 'Entry',
       description: `A user's stored entries`,
-      resolve({ id }, _, { db }): Promise<EntryModel[]> {
-        return db.Entry.find({
-          owner: id,
-        }).exec();
+      resolve({ id }, _, { entry }): Promise<EntriesEntity[]> {
+        return entry.byUserId(id);
       },
     });
   },
@@ -54,12 +50,8 @@ export const UserInput = inputObjectType({
 export const me = queryField('me', {
   type: User,
   nullable: true,
-  resolve(_, args, { db, user }): Promise<NullableUser> | null {
-    if (user) {
-      return db.User.findOne({ sub: user.sub }).exec();
-    }
-
-    return null;
+  resolve(_, args, { user }): Promise<UsersEntity | null> {
+    return user.currentUser();
   },
 });
 
@@ -68,15 +60,8 @@ export const myBooks = queryField('myBooks', {
   type: 'UserBook',
   list: true,
   nullable: true,
-  resolve: async (_, args, { db, user }): Promise<BookModel[] | null> => {
-    if (user) {
-      const data = await db.User.findById(user.id, 'books')
-        .populate('books')
-        .exec();
-      return data ? data.books : null;
-    }
-
-    return null;
+  resolve(_, args, { book }): Promise<BookModel[] | null> {
+    return book.currUserBooks();
   },
 });
 
@@ -86,14 +71,7 @@ export const updateUser = mutationField('updateUser', {
   args: {
     user: arg({ type: UserInput, required: true }),
   },
-  resolve: (_, { user }, { db }): Promise<NullableUser> | null => {
-    if (user) {
-      return db.User.findOneAndUpdate({ sub: user.sub }, user, {
-        upsert: true,
-        new: true,
-      }).exec();
-    }
-
-    return null;
+  resolve: (_, { user }, ctx): Promise<UsersEntity | null> => {
+    return ctx.user.updateUser(user);
   },
 });

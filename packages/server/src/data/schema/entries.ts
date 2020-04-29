@@ -8,12 +8,9 @@ import {
   queryField,
 } from '@nexus/schema';
 
-import {
-  EntryModel,
-  NullableBook,
-  NullableEntry,
-  NullableUser,
-} from '../models/types';
+import { EntriesEntity, UsersEntity } from '../../generated/db-types';
+
+import { NullableBook } from '../models/types';
 import { NodeType, Timestamps } from './shared';
 
 export const Entry = objectType({
@@ -31,8 +28,8 @@ export const Entry = objectType({
       type: 'UserBook',
       nullable: true,
       // @ts-ignore
-      resolve({ book: id }, _, { db }): Promise<NullableBook> {
-        return db.Book.findById(id).exec();
+      resolve({ userBookId }, _, { book }): Promise<NullableBook> {
+        return book.userBookById(userBookId);
       },
     });
     t.string('chapter', {
@@ -47,8 +44,8 @@ export const Entry = objectType({
       type: 'User',
       nullable: true,
       // @ts-ignore
-      resolve({ owner: id }, _, { db }): Promise<NullableUser> {
-        return db.User.findById(id).exec();
+      resolve({ userId }, _, { user }): Promise<UsersEntity | null> {
+        return user.byId(userId);
       },
     });
     t.int('page', {
@@ -88,12 +85,8 @@ export const myEntries = queryField('myEntries', {
   type: Entry,
   list: true,
   nullable: true,
-  resolve: async (_, args, { db, user }): Promise<EntryModel[] | null> => {
-    if (!user) return null;
-
-    const data = await db.Entry.find({ owner: user.id });
-
-    return data.length ? data : null;
+  resolve: (_, args, { entry }): Promise<EntriesEntity[] | null> => {
+    return entry.currentUserEntries();
   },
 });
 
@@ -103,61 +96,37 @@ export const entry = queryField('entry', {
   args: {
     id: idArg({ required: true }),
   },
-  resolve(_, { id }, { db }): Promise<NullableEntry> {
-    return db.Entry.findById(id).exec();
+  resolve(_, { id }, ctx): Promise<EntriesEntity | null> {
+    return ctx.entry.byId(id);
   },
 });
 
 export const createEntry = mutationField('createEntry', {
   type: Entry,
-  nullable: true,
   args: {
     input: arg({ type: NewEntryInput, required: true }),
   },
-  resolve: async (_, { input }, { db, user }): Promise<NullableEntry> => {
-    if (!user) return null;
-
-    const { id: owner } = user;
-    const data = {
-      ...input,
-      owner,
-    };
-
-    const newEntry = new db.Entry(data);
-    const savedEntry = await newEntry.save();
-
-    return savedEntry;
+  resolve(_, { input }, ctx): Promise<EntriesEntity> {
+    return ctx.entry.createEntry(input);
   },
 });
 
 export const updateEntry = mutationField('updateEntry', {
   type: Entry,
-  nullable: true,
   args: {
     input: arg({ type: UpdateEntryInput, required: true }),
   },
-  resolve(_, { input }, { db, user }): Promise<NullableEntry> | null {
-    if (!user) return null;
-
-    const { id: owner } = user;
-    return db.Entry.findOneAndUpdate({ owner, _id: input.id }, input, {
-      new: true,
-    }).exec();
+  resolve(_, { input }, ctx): Promise<EntriesEntity> {
+    return ctx.entry.updateEntry(input);
   },
 });
 
 export const removeEntry = mutationField('removeEntry', {
   type: 'ID',
-  nullable: true,
   args: {
     id: idArg({ required: true }),
   },
-  resolve: async (_, { id }, { db, user }): Promise<string | null> => {
-    if (!user) return null;
-
-    const { id: owner } = user;
-
-    const removed = await db.Entry.findOneAndRemove({ owner, _id: id });
-    return removed !== null ? removed.id : null;
+  resolve(_, { id }, ctx): Promise<string> {
+    return ctx.deleteEntry(id);
   },
 });

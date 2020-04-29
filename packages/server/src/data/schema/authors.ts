@@ -1,7 +1,8 @@
 /* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import { objectType, stringArg, queryField } from '@nexus/schema';
 
-import { AuthorModel, BookModel, NullableAuthor } from '../models/types';
+import { AuthorsEntity, IsbnBooksEntity } from '../../generated/db-types';
+
 import { NodeType } from './shared';
 
 export const Author = objectType({
@@ -10,14 +11,12 @@ export const Author = objectType({
     t.implements(NodeType);
     t.string('name');
     t.list.field('booksWritten', {
-      type: 'Book',
+      // @ts-ignore
+      type: 'ISBNDatabaseBook',
       description:
         'Other books written by the author and also stored in the database',
-      // @ts-ignore
-      resolve({ booksWritten }, _, { db }): Promise<BookModel[]> {
-        return db.Book.find({
-          _id: { $in: booksWritten },
-        }).exec();
+      resolve({ id }, _, { book }): Promise<IsbnBooksEntity[]> {
+        return book.booksWritten(id);
       },
     });
   },
@@ -27,8 +26,8 @@ export const allAuthors = queryField('allAuthors', {
   type: Author,
   nullable: true,
   list: true,
-  resolve(_, __, { db }): Promise<AuthorModel[]> {
-    return db.Author.find({}).exec();
+  resolve(_, __, { author }): Promise<AuthorsEntity[]> {
+    return author.allAuthors();
   },
 });
 
@@ -38,7 +37,7 @@ export const author = queryField('author', {
   args: {
     id: stringArg({ required: true }),
   },
-  resolve(_, { id }, { db }): Promise<NullableAuthor> {
-    return db.Author.findById(id).exec();
+  resolve(_, { id }, ctx): Promise<AuthorsEntity | null> {
+    return ctx.author.byId(id);
   },
 });
