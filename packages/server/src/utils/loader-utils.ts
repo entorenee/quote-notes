@@ -1,4 +1,5 @@
-import { keyBy, Dictionary } from 'lodash';
+import { keyBy, groupBy, Dictionary, uniq } from 'lodash';
+import { QueryBuilder } from 'knex';
 
 // eslint-disable-next-line import/no-cycle
 import Context from '../data-sources/context';
@@ -27,3 +28,32 @@ export const byColumnLoader = <
       );
     });
 };
+
+/**
+ * A type-safe loader for loading many of a particular item,
+ * grouped by an individual key.
+ * @param ctx
+ * @param table
+ * @param key
+ * @param keys
+ */
+export function manyByColumnLoader<
+  Tbl extends keyof DbTables,
+  Key extends Extract<keyof DbTables[Tbl], string>,
+  KeyType extends Extract<DbTables[Tbl][Key], string | number>
+>(
+  ctx: Context,
+  tableName: Tbl,
+  key: Key,
+  keys: KeyType[],
+  scope: (qb: QueryBuilder) => QueryBuilder = qb => qb,
+) {
+  const builder = ctx
+    .knex(tableName)
+    .select(`${tableName}.*`)
+    .whereIn(`${tableName}.${key}`, uniq(keys));
+  return scope(builder).then((rows: DbTables[Tbl][]) => {
+    const grouped = groupBy(rows, key);
+    return keys.map(id => grouped[id] || []);
+  });
+}
