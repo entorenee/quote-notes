@@ -17,8 +17,7 @@ class EntrySource {
   });
 
   private byBookIdLoader = new DataLoader<string, EntriesEntity[]>(ids => {
-    // @ts-ignore
-    return manyByColumnLoader(this.ctx, 'entries', 'user_book_id', ids);
+    return manyByColumnLoader(this.ctx, 'entries', 'userBookId', ids);
   });
 
   public byId(id: string): Promise<EntriesEntity> {

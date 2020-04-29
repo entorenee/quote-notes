@@ -45,7 +45,7 @@ export function manyByColumnLoader<
   ctx: Context,
   tableName: Tbl,
   key: Key,
-  keys: KeyType[],
+  keys: readonly KeyType[],
   scope: (qb: QueryBuilder) => QueryBuilder = qb => qb,
 ) {
   const builder = ctx

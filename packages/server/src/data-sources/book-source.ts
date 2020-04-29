@@ -18,14 +18,12 @@ class BookSource {
 
   // Used to get book ids from an author
   private bookIdsLoader = new DataLoader<string, BooksAuthorsEntity[]>(ids => {
-    // @ts-ignore
-    return manyByColumnLoader(this.ctx, 'booksAuthors', 'book_id', ids);
+    return manyByColumnLoader(this.ctx, 'booksAuthors', 'bookId', ids);
   });
 
   // TODO: likely eliminate this as a Data loader
   private userBooksLoader = new DataLoader<string, UserBooksEntity[]>(ids => {
-    // @ts-ignore
-    return manyByColumnLoader(this.ctx, 'userBooks', 'user_id', ids);
+    return manyByColumnLoader(this.ctx, 'userBooks', 'userId', ids);
   });
 
   private userBookByIdLoader = new DataLoader<string, UserBooksEntity>(ids => {
