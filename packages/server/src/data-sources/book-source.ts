@@ -32,7 +32,6 @@ class BookSource {
     return byColumnLoader(this.ctx, 'userBooks', 'id', ids);
   });
 
-  // TODO: This may not be needed in favor of a join on userBookByIdLoader
   private isbnBookByIdLoader = new DataLoader<string, IsbnBooksEntity>(ids => {
     return byColumnLoader(this.ctx, 'isbnBooks', 'id', ids);
   });
@@ -57,7 +56,7 @@ class BookSource {
 
   public async booksWritten(authorId: string) {
     const bookIds = await this.bookIds(authorId);
-    // TODO: Implement join from ISBN book to user book
+    return this.isbnBookByIdLoader.loadMany(bookIds);
   }
 }
 
