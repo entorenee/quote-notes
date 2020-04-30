@@ -5,6 +5,15 @@ import { QueryBuilder } from 'knex';
 import Context from '../data-sources/context';
 import { DbTables } from '../generated/db-types';
 
+export const orderManyLoaderResponse = <Data>(
+  key: string,
+  keys: readonly (string | number)[],
+  rows: Data[],
+): Data[][] => {
+  const grouped = groupBy(rows, key);
+  return keys.map((id): Data[] => grouped[id] || []);
+};
+
 export const byColumnLoader = <
   Tbl extends keyof DbTables,
   Key extends Extract<keyof DbTables[Tbl], string>,
@@ -29,14 +38,6 @@ export const byColumnLoader = <
     });
 };
 
-/**
- * A type-safe loader for loading many of a particular item,
- * grouped by an individual key.
- * @param ctx
- * @param table
- * @param key
- * @param keys
- */
 export function manyByColumnLoader<
   Tbl extends keyof DbTables,
   Key extends Extract<keyof DbTables[Tbl], string>,
@@ -47,13 +48,12 @@ export function manyByColumnLoader<
   key: Key,
   keys: readonly KeyType[],
   scope: (qb: QueryBuilder) => QueryBuilder = qb => qb,
-) {
+): PromiseLike<DbTables[Tbl][][]> {
   const builder = ctx
     .knex(tableName)
     .select(`${tableName}.*`)
     .whereIn(`${tableName}.${key}`, uniq(keys));
-  return scope(builder).then((rows: DbTables[Tbl][]) => {
-    const grouped = groupBy(rows, key);
-    return keys.map(id => grouped[id] || []);
+  return scope(builder).then((rows): DbTables[Tbl][][] => {
+    return orderManyLoaderResponse(key, keys, rows);
   });
 }
