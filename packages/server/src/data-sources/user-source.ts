@@ -1,6 +1,8 @@
 /* eslint-disable import/no-cycle */
 import DataLoader from 'dataloader';
+import { QueryBuilder } from 'knex';
 
+import { NexusGenInputs } from '../generated/nexus-types.gen';
 import { UsersEntity } from '../generated/db-types';
 import { byColumnLoader } from '../utils/loader-utils';
 import Context from './context';
@@ -11,6 +13,18 @@ class UserSource {
   public constructor(ctx: Context) {
     this.ctx = ctx;
   }
+
+  private userReturn: Extract<keyof UsersEntity, string>[] = [
+    'id',
+    'createdAt',
+    'updatedAt',
+    'name',
+    'sub',
+  ];
+
+  private writeUser: QueryBuilder = this.ctx
+    .knex<UsersEntity>('users')
+    .returning(this.userReturn);
 
   private bySubLoader = new DataLoader<string, UsersEntity>(ids => {
     return byColumnLoader(this.ctx, 'users', 'sub', ids);
@@ -32,6 +46,18 @@ class UserSource {
 
   public get userId(): Promise<string | null> {
     return this.currentUser().then(user => (user ? user.id : null));
+  }
+
+  public async updateUser(
+    data: NexusGenInputs['UserInput'],
+  ): Promise<UsersEntity> {
+    const userId = await this.userId;
+    if (!userId) {
+      return Promise.reject(
+        new Error('You must be authenticated to update your user data'),
+      );
+    }
+    return this.writeUser.where({ id: userId }).update(data);
   }
 }
 
