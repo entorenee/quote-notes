@@ -27,9 +27,17 @@ class AuthorSource {
     return result.map(({ authorId }) => authorId);
   }
 
-  public async authors(bookId: string) {
+  public byId(id: string) {
+    return this.byIdLoader.load(id);
+  }
+
+  public async bookAuthors(bookId: string) {
     const authorIds = await this.authorIds(bookId);
     return this.byIdLoader.loadMany(authorIds);
+  }
+
+  public allAuthors(): Promise<AuthorsEntity[]> {
+    return this.ctx.knex.from<AuthorsEntity>('authors').select('*');
   }
 }
 
