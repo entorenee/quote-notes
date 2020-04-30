@@ -1,13 +1,20 @@
 /* eslint-disable import/no-cycle */
 import DataLoader from 'dataloader';
+import { uniq } from 'lodash';
 
 import {
   BooksAuthorsEntity,
   UserBooksEntity,
   IsbnBooksEntity,
 } from '../generated/db-types';
-import { byColumnLoader, manyByColumnLoader } from '../utils/loader-utils';
+import {
+  byColumnLoader,
+  orderManyLoaderResponse,
+  manyByColumnLoader,
+} from '../utils/loader-utils';
 import Context from './context';
+
+type UserJoinedBook = UserBooksEntity & IsbnBooksEntity;
 
 class BookSource {
   protected ctx: Context;
@@ -16,18 +23,30 @@ class BookSource {
     this.ctx = ctx;
   }
 
+  /*
+   * Client doesn't need to care that ISBN and User book are on separate tables
+   * Fetch a joined User book by id or all of a user's books\
+   */
+  private userBooksQuery(
+    key: 'userId' | 'id',
+    values: readonly string[],
+  ): Promise<UserJoinedBook[][]> {
+    return this.ctx.knex
+      .from('userBooks')
+      .join('isbnBooks', 'userBooks.isbnBookId', '=', 'isbnBooks.id')
+      .whereIn(key, uniq(values))
+      .select(
+        'userBooks.*',
+        'isbnBooks.title',
+        'isbnBooks.isbn10',
+        'isbnBooks.isbn13',
+      )
+      .then(books => orderManyLoaderResponse(key, values, books));
+  }
+
   // Used to get book ids from an author
   private bookIdsLoader = new DataLoader<string, BooksAuthorsEntity[]>(ids => {
     return manyByColumnLoader(this.ctx, 'booksAuthors', 'bookId', ids);
-  });
-
-  // TODO: likely eliminate this as a Data loader
-  private userBooksLoader = new DataLoader<string, UserBooksEntity[]>(ids => {
-    return manyByColumnLoader(this.ctx, 'userBooks', 'userId', ids);
-  });
-
-  private userBookByIdLoader = new DataLoader<string, UserBooksEntity>(ids => {
-    return byColumnLoader(this.ctx, 'userBooks', 'id', ids);
   });
 
   private isbnBookByIdLoader = new DataLoader<string, IsbnBooksEntity>(ids => {
@@ -39,17 +58,34 @@ class BookSource {
     return result.map(({ bookId }) => bookId);
   }
 
-  public async currentUsersBooks(): Promise<(UserBooksEntity)[] | null> {
+  private userBooksByBookIdLoader = new DataLoader<string, UserJoinedBook[]>(
+    ids => {
+      return this.userBooksQuery('id', ids);
+    },
+  );
+
+  private userBooksByUserIdLoader = new DataLoader<string, UserJoinedBook[]>(
+    ids => {
+      return this.userBooksQuery('userId', ids);
+    },
+  );
+
+  public userBooks(userId: string): Promise<UserJoinedBook[]> {
+    return this.userBooksByUserIdLoader.load(userId);
+  }
+
+  // Helper method to load the current user's id
+  public async currUserBooks(): Promise<UserJoinedBook[] | null> {
     const userId = await this.ctx.user.userId;
-    return userId ? this.userBooksLoader.load(userId) : Promise.resolve(null);
+    return userId ? this.userBooks(userId) : Promise.resolve(null);
+  }
+
+  public userBookById(id: string): Promise<UserJoinedBook[]> {
+    return this.userBooksByBookIdLoader.load(id);
   }
 
   public isbnBookById(id: string): Promise<IsbnBooksEntity> {
     return this.isbnBookByIdLoader.load(id);
-  }
-
-  public getUserBookById(id: string): Promise<UserBooksEntity> {
-    return this.userBookByIdLoader.load(id);
   }
 
   public async booksWritten(authorId: string) {

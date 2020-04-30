@@ -20,12 +20,20 @@ class EntrySource {
     return manyByColumnLoader(this.ctx, 'entries', 'userBookId', ids);
   });
 
+  private byUserIdLoader = new DataLoader<string, EntriesEntity[]>(ids => {
+    return manyByColumnLoader(this.ctx, 'entries', 'userId', ids);
+  });
+
   public byId(id: string): Promise<EntriesEntity> {
     return this.byIdLoader.load(id);
   }
 
   public byBookId(id: string): Promise<EntriesEntity[]> {
     return this.byBookIdLoader.load(id);
+  }
+
+  public byUserId(id: string): Promise<EntriesEntity[]> {
+    return this.byUserIdLoader.load(id);
   }
 }
 
