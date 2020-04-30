@@ -50,7 +50,7 @@ export const UserInput = inputObjectType({
   definition(t) {
     t.string('name');
     t.string('picture');
-    t.string('sub', { required: true });
+    t.string('sub');
   },
 });
 
