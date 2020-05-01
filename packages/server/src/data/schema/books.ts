@@ -16,26 +16,32 @@ import {
 } from '../models/types';
 import addToMyBooksFn from '../controllers/add-to-my-books';
 import removeMyBookFn from '../controllers/remove-my-book';
-import { NodeType } from './shared';
+import { BookBase, NodeType, Timestamps } from './shared';
 
-export const Book = objectType({
-  name: 'Book',
+export const ISBNBookDBType = objectType({
+  name: 'ISBNDatabaseBook',
+  description: 'A stored subset of fields from the ISBN API for a given book',
   definition(t) {
     t.implements(NodeType);
-    t.string('isbn', {
-      description: 'ISBN number of the book',
-      nullable: true,
-    });
-    t.date('publishedDate', {
-      description: 'Date of first publication',
+    t.implements(BookBase);
+  },
+});
+
+export const UserBook = objectType({
+  name: 'UserBook',
+  description:
+    'An augmented ISBN Book, with additional user controlled properties',
+  definition(t) {
+    t.implements(NodeType);
+    t.implements(BookBase);
+    t.implements(Timestamps);
+    t.int('rating', {
+      description: `A user's rating of a book on a scale of 1-5`,
       nullable: true,
     });
     t.string('synopsis', {
       description: 'Synopsis of the book',
       nullable: true,
-    });
-    t.string('title', {
-      description: 'Title of the Book',
     });
     t.list.field('authors', {
       type: 'Author',
@@ -58,7 +64,7 @@ export const Book = objectType({
 });
 
 export const allBooks = queryField('allBooks', {
-  type: Book,
+  type: UserBook,
   nullable: true,
   list: true,
   resolve(_, __, { db }): Promise<BookModel[]> {
@@ -67,7 +73,7 @@ export const allBooks = queryField('allBooks', {
 });
 
 export const book = queryField('book', {
-  type: Book,
+  type: UserBook,
   nullable: true,
   args: {
     id: stringArg({ required: true }),
@@ -78,7 +84,7 @@ export const book = queryField('book', {
 });
 
 export const addToMyBooks = mutationField('addToMyBooks', {
-  type: Book,
+  type: UserBook,
   nullable: true,
   args: {
     isbn: stringArg({ required: true }),

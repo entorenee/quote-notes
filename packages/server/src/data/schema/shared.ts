@@ -9,6 +9,31 @@ export const NodeType = interfaceType({
   },
 });
 
+export const BookBase = interfaceType({
+  name: 'BookBase',
+  definition(t) {
+    t.string('isbn', {
+      description: 'A 10 digit ISBN',
+    });
+    t.string('isbn13', {
+      description: 'A new format 13 digit ISBN',
+    });
+    t.string('title', {
+      description: 'Title of the book',
+    });
+    t.resolveType(() => null);
+  },
+});
+
+export const Timestamps = interfaceType({
+  name: 'Timestamps',
+  definition(t) {
+    t.date('createdAt');
+    t.date('updatedAt');
+    t.resolveType(() => null);
+  },
+});
+
 export const DateScalar = scalarType({
   name: 'DateTime',
   description: 'Date custom scalar type',

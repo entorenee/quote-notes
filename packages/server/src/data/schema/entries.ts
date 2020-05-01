@@ -21,7 +21,8 @@ export const Entry = objectType({
   definition(t) {
     t.implements(NodeType);
     t.field('book', {
-      type: 'Book',
+      // @ts-ignore
+      type: 'UserBook',
       nullable: true,
       // @ts-ignore
       resolve({ book: id }, _, { db }): Promise<NullableBook> {

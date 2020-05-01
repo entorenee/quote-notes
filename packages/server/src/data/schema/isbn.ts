@@ -2,10 +2,13 @@ import { objectType, stringArg, queryField } from '@nexus/schema';
 
 import { fetchAuthor, fetchBooks } from '../../services/isbn-api';
 import { ISBNBook } from '../../services/types';
+import { BookBase } from './shared';
 
-export const ISBNBookType = objectType({
-  name: 'ISBNBook',
+export const ISBNBookAPIType = objectType({
+  name: 'ISBNAPIBook',
+  description: 'Raw response from the ISBN Database API',
   definition(t) {
+    t.implements(BookBase);
     t.list.string('authors', { nullable: true });
     t.string('date_published');
     t.string('dewey_decimal', { nullable: true });
@@ -14,8 +17,6 @@ export const ISBNBookType = objectType({
     t.string('excerpt', { nullable: true });
     t.string('format', { nullable: true });
     t.string('image', { nullable: true });
-    t.string('isbn');
-    t.string('isbn13');
     t.string('langage', { nullable: true });
     t.int('msrp', { nullable: true });
     t.string('overview', { nullable: true });
@@ -24,13 +25,12 @@ export const ISBNBookType = objectType({
     t.list.string('reviews', { nullable: true });
     t.list.string('subjects', { nullable: true });
     t.string('synopsys', { nullable: true });
-    t.string('title');
     t.string('title_long', { nullable: true });
   },
 });
 
 export const isbnAuthor = queryField('isbnAuthor', {
-  type: ISBNBookType,
+  type: ISBNBookAPIType,
   list: true,
   args: {
     name: stringArg({ required: true }),
@@ -41,7 +41,7 @@ export const isbnAuthor = queryField('isbnAuthor', {
 });
 
 export const isbnBooks = queryField('isbnBooks', {
-  type: ISBNBookType,
+  type: ISBNBookAPIType,
   list: true,
   args: {
     name: stringArg({ required: true }),

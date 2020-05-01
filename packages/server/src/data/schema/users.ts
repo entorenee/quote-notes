@@ -24,7 +24,8 @@ export const User = objectType({
     });
     t.string('sub', { description: 'Unique oAuth provider' });
     t.list.field('books', {
-      type: 'Book',
+      // @ts-ignore
+      type: 'UserBook',
       description: `A user's collection of books to take notes on`,
       // @ts-ignore
       resolve({ books }, _, { db }): Promise<BookModel[]> {
@@ -66,8 +67,9 @@ export const me = queryField('me', {
   },
 });
 
+// @ts-ignore
 export const myBooks = queryField('myBooks', {
-  type: 'Book',
+  type: 'UserBook',
   list: true,
   nullable: true,
   resolve: async (_, args, { db, user }): Promise<BookModel[] | null> => {
