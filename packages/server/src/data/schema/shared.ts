@@ -1,6 +1,10 @@
 import { interfaceType, objectType, scalarType } from '@nexus/schema';
 import { Kind } from 'graphql/language';
 
+import { IsbnBooksEntity, UserBooksEntity } from '../../generated/db-types';
+
+export type UserJoinedBook = IsbnBooksEntity & UserBooksEntity;
+
 export const NodeType = interfaceType({
   name: 'Node',
   definition(t) {
@@ -12,7 +16,7 @@ export const NodeType = interfaceType({
 export const BookBase = interfaceType({
   name: 'BookBase',
   definition(t) {
-    t.string('isbn', {
+    t.string('isbn10', {
       description: 'A 10 digit ISBN',
     });
     t.string('isbn13', {

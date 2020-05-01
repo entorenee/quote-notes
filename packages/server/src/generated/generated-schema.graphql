@@ -4,46 +4,32 @@
 
 type Author implements Node {
   """Other books written by the author and also stored in the database"""
-  booksWritten: [Book!]!
+  booksWritten: [ISBNDatabaseBook!]!
 
   """Unique identifier for the resource"""
   id: ID!
   name: String!
 }
 
-type Book implements Node {
-  """A list of authors for a given book"""
-  authors: [Author!]!
+interface BookBase {
+  """A 10 digit ISBN"""
+  isbn10: String!
 
-  """A user's entries on the given Book"""
-  entries: [Entry!]!
+  """A new format 13 digit ISBN"""
+  isbn13: String!
 
-  """Unique identifier for the resource"""
-  id: ID!
-
-  """ISBN number of the book"""
-  isbn: String
-
-  """Date of first publication"""
-  publishedDate: DateTime
-
-  """Synopsis of the book"""
-  synopsis: String
-
-  """Title of the Book"""
+  """Title of the book"""
   title: String!
 }
 
 """Date custom scalar type"""
 scalar DateTime
 
-type Entry implements Node {
-  book: Book
+type Entry implements Node & Timestamps {
+  book: UserBook
 
   """Chapter relating to the note"""
   chapter: String
-
-  """Database generated timestamp of entry creation"""
   createdAt: DateTime!
 
   """Unique identifier for the resource"""
@@ -58,9 +44,17 @@ type Entry implements Node {
 
   """Quoted text from the book"""
   quote: String
+  updatedAt: DateTime!
+
+  """Foreign key to the associated user book for the entry"""
+  userBookId: ID!
+
+  """Foreign key to the associated owner of the entry"""
+  userId: ID!
 }
 
-type ISBNBook {
+"""Raw response from the ISBN Database API"""
+type ISBNAPIBook {
   authors: [String!]
   date_published: String!
   dewey_decimal: String
@@ -69,7 +63,11 @@ type ISBNBook {
   excerpt: String
   format: String
   image: String
+
+  """A 10 digit ISBN"""
   isbn: String!
+
+  """A new format 13 digit ISBN"""
   isbn13: String!
   langage: String
   msrp: Int
@@ -79,16 +77,33 @@ type ISBNBook {
   reviews: [String!]
   subjects: [String!]
   synopsys: String
+
+  """Title of the book"""
   title: String!
   title_long: String
 }
 
+"""A stored subset of fields from the ISBN API for a given book"""
+type ISBNDatabaseBook implements BookBase & Node {
+  """Unique identifier for the resource"""
+  id: ID!
+
+  """A 10 digit ISBN"""
+  isbn10: String!
+
+  """A new format 13 digit ISBN"""
+  isbn13: String!
+
+  """Title of the book"""
+  title: String!
+}
+
 type Mutation {
-  addToMyBooks(isbn: String!): Book
-  createEntry(input: NewEntryInput!): Entry
-  removeEntry(id: ID!): ID
-  removeMyBook(id: ID!): User
-  updateEntry(input: UpdateEntryInput!): Entry
+  addToMyBooks(isbn: String!): UserBook!
+  createEntry(input: NewEntryInput!): Entry!
+  removeEntry(id: ID!): ID!
+  removeMyBook(id: ID!): ID!
+  updateEntry(input: UpdateEntryInput!): Entry!
   updateUser(user: UserInput!): User
 }
 
@@ -107,15 +122,19 @@ interface Node {
 
 type Query {
   allAuthors: [Author!]
-  allBooks: [Book!]
   author(id: String!): Author
-  book(id: String!): Book
   entry(id: ID!): Entry
-  isbnAuthor(name: String!): [ISBNBook!]!
-  isbnBooks(name: String!): [ISBNBook!]!
+  isbnAuthor(name: String!): [ISBNAPIBook!]!
+  isbnBooks(name: String!): [ISBNAPIBook!]!
   me: User
-  myBooks: [Book!]
+  myBooks: [UserBook!]
   myEntries: [Entry!]
+  userBook(id: String!): UserBook
+}
+
+interface Timestamps {
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input UpdateEntryInput {
@@ -126,9 +145,10 @@ input UpdateEntryInput {
   quote: String
 }
 
-type User implements Node {
+type User implements Node & Timestamps {
   """A user's collection of books to take notes on"""
-  books: [Book!]!
+  books: [UserBook!]!
+  createdAt: DateTime!
 
   """A user's stored entries"""
   entries: [Entry!]!
@@ -139,15 +159,42 @@ type User implements Node {
   """User's name from oAuth provider"""
   name: String
 
-  """User's profile image from oAuth provider"""
-  picture: String
-
   """Unique oAuth provider"""
   sub: String!
+  updatedAt: DateTime!
+}
+
+"""An augmented ISBN Book, with additional user controlled properties"""
+type UserBook implements BookBase & Node & Timestamps {
+  """A list of authors for a given book"""
+  authors: [Author!]!
+  createdAt: DateTime!
+
+  """A user's entries on the given Book"""
+  entries: [Entry!]!
+
+  """Unique identifier for the resource"""
+  id: ID!
+
+  """A 10 digit ISBN"""
+  isbn10: String!
+
+  """A new format 13 digit ISBN"""
+  isbn13: String!
+
+  """A user's rating of a book on a scale of 1-5"""
+  rating: Int
+
+  """Synopsis of the book"""
+  synopsis: String
+
+  """Title of the book"""
+  title: String!
+  updatedAt: DateTime!
 }
 
 input UserInput {
   name: String
   picture: String
-  sub: String!
+  sub: String
 }

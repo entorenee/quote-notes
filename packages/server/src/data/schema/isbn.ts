@@ -2,13 +2,20 @@ import { objectType, stringArg, queryField } from '@nexus/schema';
 
 import { fetchAuthor, fetchBooks } from '../../services/isbn-api';
 import { ISBNBook } from '../../services/types';
-import { BookBase } from './shared';
 
 export const ISBNBookAPIType = objectType({
   name: 'ISBNAPIBook',
   description: 'Raw response from the ISBN Database API',
   definition(t) {
-    t.implements(BookBase);
+    t.string('isbn', {
+      description: 'A 10 digit ISBN',
+    });
+    t.string('isbn13', {
+      description: 'A new format 13 digit ISBN',
+    });
+    t.string('title', {
+      description: 'Title of the book',
+    });
     t.list.string('authors', { nullable: true });
     t.string('date_published');
     t.string('dewey_decimal', { nullable: true });

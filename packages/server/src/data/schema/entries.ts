@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
   arg,
   idArg,
@@ -10,8 +9,7 @@ import {
 
 import { EntriesEntity, UsersEntity } from '../../generated/db-types';
 
-import { NullableBook } from '../models/types';
-import { NodeType, Timestamps } from './shared';
+import { NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const Entry = objectType({
   name: 'Entry',
@@ -24,11 +22,9 @@ export const Entry = objectType({
       description: 'Foreign key to the associated owner of the entry',
     });
     t.field('book', {
-      // @ts-ignore
       type: 'UserBook',
       nullable: true,
-      // @ts-ignore
-      resolve({ userBookId }, _, { book }): Promise<NullableBook> {
+      resolve({ userBookId }, _, { book }): Promise<UserJoinedBook | null> {
         return book.userBookById(userBookId);
       },
     });
@@ -43,7 +39,6 @@ export const Entry = objectType({
     t.field('owner', {
       type: 'User',
       nullable: true,
-      // @ts-ignore
       resolve({ userId }, _, { user }): Promise<UsersEntity | null> {
         return user.byId(userId);
       },

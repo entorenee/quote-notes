@@ -27,9 +27,9 @@ class EntrySource {
     'quote',
   ];
 
-  private writeEntry: QueryBuilder = this.ctx
-    .knex<EntriesEntity>('entries')
-    .returning(this.entryReturn);
+  private get writeEntry(): QueryBuilder {
+    return this.ctx.knex<EntriesEntity>('entries').returning(this.entryReturn);
+  }
 
   private byIdLoader = new DataLoader<string, EntriesEntity>(ids => {
     return byColumnLoader(this.ctx, 'entries', 'id', ids);

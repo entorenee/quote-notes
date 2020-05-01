@@ -22,9 +22,9 @@ class UserSource {
     'sub',
   ];
 
-  private writeUser: QueryBuilder = this.ctx
-    .knex<UsersEntity>('users')
-    .returning(this.userReturn);
+  private get writeUser(): QueryBuilder {
+    return this.ctx.knex<UsersEntity>('users').returning(this.userReturn);
+  }
 
   private bySubLoader = new DataLoader<string, UsersEntity>(ids => {
     return byColumnLoader(this.ctx, 'users', 'sub', ids);

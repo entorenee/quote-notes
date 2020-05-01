@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
   arg,
   mutationField,
@@ -8,8 +7,7 @@ import {
 } from '@nexus/schema';
 
 import { EntriesEntity, UsersEntity } from '../../generated/db-types';
-import { BookModel } from '../models/types';
-import { NodeType, Timestamps } from './shared';
+import { NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const User = objectType({
   name: 'User',
@@ -21,10 +19,9 @@ export const User = objectType({
     });
     t.string('sub', { description: 'Unique oAuth provider' });
     t.list.field('books', {
-      // @ts-ignore
       type: 'UserBook',
       description: `A user's collection of books to take notes on`,
-      resolve({ id }, _, { book }): Promise<BookModel[]> {
+      resolve({ id }, _, { book }): Promise<UserJoinedBook[]> {
         return book.userBooks(id);
       },
     });
@@ -55,12 +52,11 @@ export const me = queryField('me', {
   },
 });
 
-// @ts-ignore
 export const myBooks = queryField('myBooks', {
   type: 'UserBook',
   list: true,
   nullable: true,
-  resolve(_, args, { book }): Promise<BookModel[] | null> {
+  resolve(_, args, { book }): Promise<UserJoinedBook[] | null> {
     return book.currUserBooks();
   },
 });

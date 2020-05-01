@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
   idArg,
   mutationField,
@@ -9,10 +8,7 @@ import {
 
 import { AuthorsEntity, EntriesEntity } from '../../generated/db-types';
 
-import { NullableBook, NullableUser } from '../models/types';
-import addToMyBooksFn from '../controllers/add-to-my-books';
-import removeMyBookFn from '../controllers/remove-my-book';
-import { BookBase, NodeType, Timestamps } from './shared';
+import { BookBase, NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const ISBNBookDBType = objectType({
   name: 'ISBNDatabaseBook',
@@ -60,29 +56,27 @@ export const book = queryField('userBook', {
   args: {
     id: stringArg({ required: true }),
   },
-  resolve(_, { id }, ctx): Promise<NullableBook> {
+  resolve(_, { id }, ctx): Promise<UserJoinedBook | null> {
     return ctx.book.userBookById(id);
   },
 });
 
 export const addToMyBooks = mutationField('addToMyBooks', {
   type: UserBook,
-  nullable: true,
   args: {
     isbn: stringArg({ required: true }),
   },
-  resolve(_, { isbn }, { user }): Promise<NullableBook> {
-    return addToMyBooksFn(isbn, user);
+  resolve(_, { isbn }, ctx): Promise<UserJoinedBook> {
+    return ctx.createUserBook(isbn);
   },
 });
 
 export const removeMyBook = mutationField('removeMyBook', {
-  type: 'User',
-  nullable: true,
+  type: 'ID',
   args: {
     id: idArg({ required: true }),
   },
-  resolve(_, { id }, { user }): Promise<NullableUser> {
-    return removeMyBookFn(id, user);
+  resolve(_, { id }, ctx): Promise<string> {
+    return ctx.book.deleteUserBook(id);
   },
 });

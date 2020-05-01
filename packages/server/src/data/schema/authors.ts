@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import { objectType, stringArg, queryField } from '@nexus/schema';
 
 import { AuthorsEntity, IsbnBooksEntity } from '../../generated/db-types';
@@ -11,7 +10,6 @@ export const Author = objectType({
     t.implements(NodeType);
     t.string('name');
     t.list.field('booksWritten', {
-      // @ts-ignore
       type: 'ISBNDatabaseBook',
       description:
         'Other books written by the author and also stored in the database',
