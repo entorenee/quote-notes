@@ -27,6 +27,19 @@ class AuthorSource {
     return result.map(({ authorId }) => authorId);
   }
 
+  /*
+   * Method to return all authors whose name is in an array of values.
+   * Used when creating new book entries in book-source
+   */
+  public authorsByName(
+    authorNames: readonly AuthorsEntity['name'][],
+  ): Promise<AuthorsEntity[]> {
+    return this.ctx
+      .knex<AuthorsEntity>('authors')
+      .select('*')
+      .whereIn('name', authorNames);
+  }
+
   public byId(id: string) {
     return this.byIdLoader.load(id);
   }

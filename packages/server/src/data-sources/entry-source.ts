@@ -97,7 +97,7 @@ class EntrySource {
     }
     return this.writeEntry
       .where({ userId, id })
-      .del(id)
+      .del()
       .returning(['id']);
   }
 }
