@@ -32,9 +32,7 @@ export const UserBook = objectType({
   description:
     'An augmented ISBN Book, with additional user controlled properties',
   definition(t) {
-    t.implements(NodeType);
-    t.implements(BookBase);
-    t.implements(Timestamps);
+    t.implements(BookBase, NodeType, Timestamps);
     t.int('rating', {
       description: `A user's rating of a book on a scale of 1-5`,
       nullable: true,

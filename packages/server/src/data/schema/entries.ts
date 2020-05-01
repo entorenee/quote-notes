@@ -14,12 +14,18 @@ import {
   NullableEntry,
   NullableUser,
 } from '../models/types';
-import { NodeType } from './shared';
+import { NodeType, Timestamps } from './shared';
 
 export const Entry = objectType({
   name: 'Entry',
   definition(t) {
-    t.implements(NodeType);
+    t.implements(NodeType, Timestamps);
+    t.id('userBookId', {
+      description: 'Foreign key to the associated user book for the entry',
+    });
+    t.id('userId', {
+      description: 'Foreign key to the associated owner of the entry',
+    });
     t.field('book', {
       // @ts-ignore
       type: 'UserBook',
@@ -32,9 +38,6 @@ export const Entry = objectType({
     t.string('chapter', {
       description: 'Chapter relating to the note',
       nullable: true,
-    });
-    t.date('createdAt', {
-      description: 'Database generated timestamp of entry creation',
     });
     t.string('notes', {
       description: 'User supplied notes for the entry',

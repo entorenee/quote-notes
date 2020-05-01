@@ -8,18 +8,14 @@ import {
 } from '@nexus/schema';
 
 import { BookModel, EntryModel, NullableUser } from '../models/types';
-import { NodeType } from './shared';
+import { NodeType, Timestamps } from './shared';
 
 export const User = objectType({
   name: 'User',
   definition(t) {
-    t.implements(NodeType);
+    t.implements(NodeType, Timestamps);
     t.string('name', {
       description: `User's name from oAuth provider`,
-      nullable: true,
-    });
-    t.string('picture', {
-      description: `User's profile image from oAuth provider`,
       nullable: true,
     });
     t.string('sub', { description: 'Unique oAuth provider' });
