@@ -10,7 +10,7 @@ export interface IsbnBooksEntity {
   id: string;
   title: string;
   isbn10: string;
-  isbn13: string;
+  isbn13: string | null;
 }
 
 export interface EntriesEntity {
