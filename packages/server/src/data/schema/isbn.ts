@@ -12,6 +12,7 @@ export const ISBNBookAPIType = objectType({
     });
     t.string('isbn13', {
       description: 'A new format 13 digit ISBN',
+      nullable: true,
     });
     t.string('title', {
       description: 'Title of the book',

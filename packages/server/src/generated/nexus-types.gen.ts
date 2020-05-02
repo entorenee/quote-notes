@@ -72,7 +72,7 @@ export interface NexusGenRootTypes {
     format?: string | null; // String
     image?: string | null; // String
     isbn: string; // String!
-    isbn13: string; // String!
+    isbn13?: string | null; // String
     langage?: string | null; // String
     msrp?: number | null; // Int
     overview?: string | null; // String
@@ -104,6 +104,7 @@ export interface NexusGenRootTypes {
     id: string; // ID!
     isbn10: string; // String!
     isbn13: string; // String!
+    isbnBookId: string; // ID!
     rating?: number | null; // Int
     synopsis?: string | null; // String
     title: string; // String!
@@ -155,7 +156,7 @@ export interface NexusGenFieldTypes {
     format: string | null; // String
     image: string | null; // String
     isbn: string; // String!
-    isbn13: string; // String!
+    isbn13: string | null; // String
     langage: string | null; // String
     msrp: number | null; // Int
     overview: string | null; // String
@@ -208,6 +209,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     isbn10: string; // String!
     isbn13: string; // String!
+    isbnBookId: string; // ID!
     rating: number | null; // Int
     synopsis: string | null; // String
     title: string; // String!

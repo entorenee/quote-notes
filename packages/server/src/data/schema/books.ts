@@ -25,6 +25,9 @@ export const UserBook = objectType({
     'An augmented ISBN Book, with additional user controlled properties',
   definition(t) {
     t.implements(BookBase, NodeType, Timestamps);
+    t.id('isbnBookId', {
+      description: 'A foreign key to the canonical ISBN Book',
+    });
     t.int('rating', {
       description: `A user's rating of a book on a scale of 1-5`,
       nullable: true,
@@ -36,8 +39,8 @@ export const UserBook = objectType({
     t.list.field('authors', {
       type: 'Author',
       description: 'A list of authors for a given book',
-      resolve({ id }, _, { author }): Promise<AuthorsEntity[]> {
-        return author.authors(id);
+      resolve({ isbnBookId }, _, { author }): Promise<AuthorsEntity[]> {
+        return author.bookAuthors(isbnBookId);
       },
     });
     t.list.field('entries', {
@@ -67,7 +70,7 @@ export const addToMyBooks = mutationField('addToMyBooks', {
     isbn: stringArg({ required: true }),
   },
   resolve(_, { isbn }, ctx): Promise<UserJoinedBook> {
-    return ctx.createUserBook(isbn);
+    return ctx.book.createUserBook(isbn);
   },
 });
 

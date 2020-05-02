@@ -68,7 +68,7 @@ type ISBNAPIBook {
   isbn: String!
 
   """A new format 13 digit ISBN"""
-  isbn13: String!
+  isbn13: String
   langage: String
   msrp: Int
   overview: String
@@ -181,6 +181,9 @@ type UserBook implements BookBase & Node & Timestamps {
 
   """A new format 13 digit ISBN"""
   isbn13: String!
+
+  """A foreign key to the canonical ISBN Book"""
+  isbnBookId: ID!
 
   """A user's rating of a book on a scale of 1-5"""
   rating: Int
