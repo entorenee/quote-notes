@@ -90,7 +90,7 @@ export interface NexusGenRootTypes {
   ISBNDatabaseBook: { // root type
     id: string; // ID!
     isbn10: string; // String!
-    isbn13: string; // String!
+    isbn13?: string | null; // String
     title: string; // String!
   }
   Mutation: {};
@@ -106,7 +106,7 @@ export interface NexusGenRootTypes {
     createdAt: any; // DateTime!
     id: string; // ID!
     isbn10: string; // String!
-    isbn13: string; // String!
+    isbn13?: string | null; // String
     isbnBookId: string; // ID!
     rating?: number | null; // Int
     synopsis?: string | null; // String
@@ -175,7 +175,7 @@ export interface NexusGenFieldTypes {
   ISBNDatabaseBook: { // field return type
     id: string; // ID!
     isbn10: string; // String!
-    isbn13: string; // String!
+    isbn13: string | null; // String
     title: string; // String!
   }
   Mutation: { // field return type
@@ -212,7 +212,7 @@ export interface NexusGenFieldTypes {
     entries: NexusGenRootTypes['Entry'][]; // [Entry!]!
     id: string; // ID!
     isbn10: string; // String!
-    isbn13: string; // String!
+    isbn13: string | null; // String
     isbnBookId: string; // ID!
     rating: number | null; // Int
     synopsis: string | null; // String
@@ -221,7 +221,7 @@ export interface NexusGenFieldTypes {
   }
   BookBase: { // field return type
     isbn10: string; // String!
-    isbn13: string; // String!
+    isbn13: string | null; // String
     title: string; // String!
   }
   Node: { // field return type
