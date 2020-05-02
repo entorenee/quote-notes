@@ -34,6 +34,6 @@
     "@types/lodash": "^4.14.150",
     "@types/node-fetch": "^2.5.7",
     "@types/prettier": "^2.0.0",
-    "ts-node": "^8.4.1"
+    "ts-node": "^8.9.1"
   }
 }
