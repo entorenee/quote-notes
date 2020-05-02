@@ -58,19 +58,24 @@ class BookSource {
   }
 
   // Used to get book ids from an author
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private bookIdsLoader = new DataLoader<string, BooksAuthorsEntity[]>(ids => {
     return manyByColumnLoader(this.ctx, 'booksAuthors', 'authorId', ids);
   });
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private isbnBookByIdLoader = new DataLoader<string, IsbnBooksEntity>(ids => {
     return byColumnLoader(this.ctx, 'isbnBooks', 'id', ids);
   });
 
-  private async bookIds(authorId: string) {
+  private async bookIds(
+    authorId: string,
+  ): Promise<BooksAuthorsEntity['bookId'][]> {
     const result = await this.bookIdsLoader.load(authorId);
-    return result.map(({ bookId }) => bookId);
+    return result.map(({ bookId }): BooksAuthorsEntity['bookId'] => bookId);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private userBooksByBookIdLoader = new DataLoader<string, UserJoinedBook>(
     ids => {
       const key = 'id';
@@ -116,7 +121,7 @@ class BookSource {
       /* eslint-disable @typescript-eslint/explicit-function-return-type */
       return this.ctx.knex.transaction(async trx => {
         const authorsPromise = this.ctx.author.authorsByName(authors);
-        const isbnPromise: Promise<IsbnBooksEntity> = trx<IsbnBooksEntity>(
+        const isbnPromise: Promise<IsbnBooksEntity[]> = trx<IsbnBooksEntity>(
           'isbnBooks',
         )
           .insert({
@@ -125,7 +130,7 @@ class BookSource {
             title,
           })
           .returning(['id', 'isbn10', 'isbn13', 'title']);
-        const [authorRecords, isbnRecord] = await Promise.all([
+        const [authorRecords, [isbnRecord]] = await Promise.all([
           authorsPromise,
           isbnPromise,
         ]);
@@ -147,15 +152,15 @@ class BookSource {
         const bookAuthorEntries = authorRecords
           .map(({ id }): AuthorsEntity['id'] => id)
           .concat(...newAuthorIds)
-          .map(authorId => ({
-            authorId,
-            // @ts-ignore
-            bookId: isbnRecord[0].id,
-          }));
+          .map(
+            (authorId): BooksAuthorsEntity => ({
+              authorId,
+              bookId: isbnRecord.id,
+            }),
+          );
         await trx<BooksAuthorsEntity>('booksAuthors').insert(bookAuthorEntries);
 
-        // @ts-ignore
-        return isbnRecord[0];
+        return isbnRecord;
       });
     } catch (e) {
       return Promise.reject(e);
@@ -219,11 +224,12 @@ class BookSource {
         new Error('You must be authenticated to delete a user book'),
       );
     }
-    return this.ctx
+    const [bookId] = await this.ctx
       .knex<UserBooksEntity>('userBooks')
       .where({ userId, id })
       .del()
-      .returning(['id']);
+      .returning('id');
+    return bookId;
   }
 }
 

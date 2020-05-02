@@ -73,7 +73,8 @@ class EntrySource {
       ...data,
       userId,
     };
-    return this.writeEntry.insert(input);
+    const [entry] = await this.writeEntry.insert(input);
+    return entry;
   }
 
   public async updateEntry(
@@ -85,7 +86,10 @@ class EntrySource {
         new Error('You must be authenticated to update an entry'),
       );
     }
-    return this.writeEntry.where({ userId, id: data.id }).update(data);
+    const [entry] = await this.writeEntry
+      .where({ userId, id: data.id })
+      .update(data);
+    return entry;
   }
 
   public async deleteEntry(id: string): Promise<Pick<EntriesEntity, 'id'>> {
@@ -95,10 +99,11 @@ class EntrySource {
         new Error('You must be authenticated to delete an entry'),
       );
     }
-    return this.writeEntry
+    const [deletedId] = await this.writeEntry
       .where({ userId, id })
       .del()
-      .returning(['id']);
+      .returning('id');
+    return deletedId;
   }
 }
 

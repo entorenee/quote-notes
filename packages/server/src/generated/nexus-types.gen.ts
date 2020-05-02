@@ -23,11 +23,12 @@ declare global {
 
 export interface NexusGenInputs {
   NewEntryInput: { // input type
-    book: string; // ID!
     chapter?: string | null; // String
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title: string; // String!
+    userBookId: string; // ID!
   }
   UpdateEntryInput: { // input type
     chapter?: string | null; // String
@@ -35,6 +36,7 @@ export interface NexusGenInputs {
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title?: string | null; // String
   }
   UserInput: { // input type
     name?: string | null; // String
@@ -58,6 +60,7 @@ export interface NexusGenRootTypes {
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title: string; // String!
     updatedAt: any; // DateTime!
     userBookId: string; // ID!
     userId: string; // ID!
@@ -142,6 +145,7 @@ export interface NexusGenFieldTypes {
     owner: NexusGenRootTypes['User'] | null; // User
     page: number | null; // Int
     quote: string | null; // String
+    title: string; // String!
     updatedAt: any; // DateTime!
     userBookId: string; // ID!
     userId: string; // ID!

@@ -57,7 +57,8 @@ class UserSource {
         new Error('You must be authenticated to update your user data'),
       );
     }
-    return this.writeUser.where({ id: userId }).update(data);
+    const [user] = await this.writeUser.where({ id: userId }).update(data);
+    return user;
   }
 }
 

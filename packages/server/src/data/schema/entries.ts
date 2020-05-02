@@ -28,6 +28,9 @@ export const Entry = objectType({
         return book.userBookById(userBookId);
       },
     });
+    t.string('title', {
+      description: 'Display title of the entry',
+    });
     t.string('chapter', {
       description: 'Chapter relating to the note',
       nullable: true,
@@ -57,7 +60,8 @@ export const Entry = objectType({
 export const NewEntryInput = inputObjectType({
   name: 'NewEntryInput',
   definition(t) {
-    t.id('book', { required: true });
+    t.id('userBookId', { required: true });
+    t.string('title', { required: true });
     t.string('chapter');
     t.string('notes');
     t.int('page');
@@ -69,6 +73,7 @@ export const UpdateEntryInput = inputObjectType({
   name: 'UpdateEntryInput',
   definition(t) {
     t.id('id', { required: true });
+    t.string('title');
     t.string('chapter');
     t.string('notes');
     t.int('page');
@@ -122,6 +127,6 @@ export const removeEntry = mutationField('removeEntry', {
     id: idArg({ required: true }),
   },
   resolve(_, { id }, ctx): Promise<string> {
-    return ctx.deleteEntry(id);
+    return ctx.entry.deleteEntry(id);
   },
 });

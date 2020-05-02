@@ -44,6 +44,9 @@ type Entry implements Node & Timestamps {
 
   """Quoted text from the book"""
   quote: String
+
+  """Display title of the entry"""
+  title: String!
   updatedAt: DateTime!
 
   """Foreign key to the associated user book for the entry"""
@@ -108,11 +111,12 @@ type Mutation {
 }
 
 input NewEntryInput {
-  book: ID!
   chapter: String
   notes: String
   page: Int
   quote: String
+  title: String!
+  userBookId: ID!
 }
 
 interface Node {
@@ -143,6 +147,7 @@ input UpdateEntryInput {
   notes: String
   page: Int
   quote: String
+  title: String
 }
 
 type User implements Node & Timestamps {
