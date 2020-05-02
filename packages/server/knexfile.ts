@@ -5,7 +5,7 @@ config();
 module.exports = {
   development: {
     client: 'pg',
-    connection: process.env.POSTGRESQL_URL,
+    connection: process.env.DB_URL,
     migrations: {
       extension: 'ts',
     },

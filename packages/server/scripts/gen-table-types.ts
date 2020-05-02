@@ -13,7 +13,7 @@ dotenv.config();
 const GENERATED_DIR = path.join(__dirname, '../src/generated');
 const DB_TYPES = path.join(GENERATED_DIR, 'db-types.ts');
 
-const { POSTGRESQL_URL: connectionStr } = process.env;
+const { DB_URL: connectionStr } = process.env;
 
 const dbConfig: Config = {
   client: 'pg',

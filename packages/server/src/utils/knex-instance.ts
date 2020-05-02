@@ -24,7 +24,7 @@ const postProcessResponse = (result: any) => {
 const knexInstance = (): knex =>
   knex({
     client: 'pg',
-    connection: process.env.POSTGRESQL_URL,
+    connection: process.env.DB_URL,
     wrapIdentifier,
     postProcessResponse,
   });
