@@ -6,7 +6,7 @@ import { NodeType } from './shared';
 
 export const Author = objectType({
   name: 'Author',
-  definition(t) {
+  definition(t): void {
     t.implements(NodeType);
     t.string('name');
     t.list.field('booksWritten', {

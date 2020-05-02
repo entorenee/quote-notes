@@ -13,7 +13,7 @@ import { BookBase, NodeType, Timestamps, UserJoinedBook } from './shared';
 export const ISBNBookDBType = objectType({
   name: 'ISBNDatabaseBook',
   description: 'A stored subset of fields from the ISBN API for a given book',
-  definition(t) {
+  definition(t): void {
     t.implements(NodeType);
     t.implements(BookBase);
   },
@@ -23,7 +23,7 @@ export const UserBook = objectType({
   name: 'UserBook',
   description:
     'An augmented ISBN Book, with additional user controlled properties',
-  definition(t) {
+  definition(t): void {
     t.implements(BookBase, NodeType, Timestamps);
     t.id('isbnBookId', {
       description: 'A foreign key to the canonical ISBN Book',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as Knex from 'knex';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

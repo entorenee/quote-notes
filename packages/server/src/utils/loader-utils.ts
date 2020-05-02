@@ -1,5 +1,4 @@
 import { keyBy, groupBy, Dictionary, uniq } from 'lodash';
-import { QueryBuilder } from 'knex';
 
 // eslint-disable-next-line import/no-cycle
 import Context from '../data-sources/context';
@@ -13,7 +12,7 @@ export const orderLoaderResponse = <Data>(
 ): (Data | Error)[] => {
   const normalized: Dictionary<Data> = keyBy(rows, key);
   return keys.map(
-    keyVal =>
+    (keyVal): Data | Error =>
       normalized[keyVal] ||
       new Error(`Missing row data for ${table}:${key} ${keyVal}`),
   );
@@ -38,11 +37,14 @@ export const byColumnLoader = <
   key: Key,
   values: readonly KeyType[],
 ): PromiseLike<DbTables[Tbl][]> => {
-  return ctx.knex
-    .select('*')
-    .from(table)
-    .whereIn(key, values)
-    .then(rows => orderLoaderResponse(table, key, values, rows));
+  return (
+    ctx.knex
+      .select('*')
+      .from(table)
+      .whereIn(key, values)
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+      .then(rows => orderLoaderResponse(table, key, values, rows))
+  );
 };
 
 export function manyByColumnLoader<
@@ -54,13 +56,12 @@ export function manyByColumnLoader<
   tableName: Tbl,
   key: Key,
   keys: readonly KeyType[],
-  scope: (qb: QueryBuilder) => QueryBuilder = qb => qb,
 ): PromiseLike<DbTables[Tbl][][]> {
-  const builder = ctx
+  return ctx
     .knex(tableName)
     .select(`${tableName}.*`)
-    .whereIn(`${tableName}.${key}`, uniq(keys));
-  return scope(builder).then((rows): DbTables[Tbl][][] => {
-    return orderManyLoaderResponse(key, keys, rows);
-  });
+    .whereIn(`${tableName}.${key}`, uniq(keys))
+    .then((rows): DbTables[Tbl][][] => {
+      return orderManyLoaderResponse(key, keys, rows);
+    });
 }

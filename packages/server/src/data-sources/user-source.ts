@@ -26,10 +26,12 @@ class UserSource {
     return this.ctx.knex<UsersEntity>('users').returning(this.userReturn);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private bySubLoader = new DataLoader<string, UsersEntity>(ids => {
     return byColumnLoader(this.ctx, 'users', 'sub', ids);
   });
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private byIdLoader = new DataLoader<string, UsersEntity>(ids => {
     return byColumnLoader(this.ctx, 'users', 'id', ids);
   });
@@ -45,7 +47,9 @@ class UserSource {
   }
 
   public get userId(): Promise<string | null> {
-    return this.currentUser().then(user => (user ? user.id : null));
+    return this.currentUser().then((user): string | null =>
+      user ? user.id : null,
+    );
   }
 
   public async updateUser(

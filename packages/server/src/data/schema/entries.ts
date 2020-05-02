@@ -13,7 +13,7 @@ import { NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const Entry = objectType({
   name: 'Entry',
-  definition(t) {
+  definition(t): void {
     t.implements(NodeType, Timestamps);
     t.id('userBookId', {
       description: 'Foreign key to the associated user book for the entry',
@@ -59,7 +59,7 @@ export const Entry = objectType({
 
 export const NewEntryInput = inputObjectType({
   name: 'NewEntryInput',
-  definition(t) {
+  definition(t): void {
     t.id('userBookId', { required: true });
     t.string('title', { required: true });
     t.string('chapter');
@@ -71,7 +71,7 @@ export const NewEntryInput = inputObjectType({
 
 export const UpdateEntryInput = inputObjectType({
   name: 'UpdateEntryInput',
-  definition(t) {
+  definition(t): void {
     t.id('id', { required: true });
     t.string('title');
     t.string('chapter');

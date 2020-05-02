@@ -75,22 +75,21 @@ class BookSource {
     return result.map(({ bookId }): BooksAuthorsEntity['bookId'] => bookId);
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private userBooksByBookIdLoader = new DataLoader<string, UserJoinedBook>(
-    ids => {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async ids => {
       const key = 'id';
-      return this.userBooksQuery(key, ids).then(books =>
-        orderLoaderResponse('userBooks', key, ids, books),
-      );
+      const books = await this.userBooksQuery(key, ids);
+      return orderLoaderResponse('userBooks', key, ids, books);
     },
   );
 
   private userBooksByUserIdLoader = new DataLoader<string, UserJoinedBook[]>(
-    ids => {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    async ids => {
       const key = 'userId';
-      return this.userBooksQuery(key, ids).then(books =>
-        orderManyLoaderResponse(key, ids, books),
-      );
+      const books = await this.userBooksQuery(key, ids);
+      return orderManyLoaderResponse(key, ids, books);
     },
   );
 
@@ -185,7 +184,9 @@ class BookSource {
     return this.isbnBookByIdLoader.load(id);
   }
 
-  public async booksWritten(authorId: string) {
+  public async booksWritten(
+    authorId: string,
+  ): Promise<(IsbnBooksEntity | Error)[]> {
     const bookIds = await this.bookIds(authorId);
     return this.isbnBookByIdLoader.loadMany(bookIds);
   }

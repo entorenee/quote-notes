@@ -11,7 +11,7 @@ import { NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const User = objectType({
   name: 'User',
-  definition(t) {
+  definition(t): void {
     t.implements(NodeType, Timestamps);
     t.string('name', {
       description: `User's name from oAuth provider`,
@@ -37,7 +37,7 @@ export const User = objectType({
 
 export const UserInput = inputObjectType({
   name: 'UserInput',
-  definition(t) {
+  definition(t): void {
     t.string('name');
     t.string('picture');
     t.string('sub');

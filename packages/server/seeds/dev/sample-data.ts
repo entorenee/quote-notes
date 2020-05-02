@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/camelcase, @typescript-eslint/explicit-function-return-type */
 import * as Knex from 'knex';
 
 const users = [
@@ -68,11 +68,12 @@ const entries = [
     user_book_id: 'c5206512-b9af-4b4a-96a2-4102fa8b3480',
     user_id: 'a6a7c4f4-40d5-41c8-9f6f-6ecbf053c31c',
     title: 'I love this book',
-    notes: 'This book is an excellent treatise on culture and life when religion dictates laws of societies',
-  }
+    notes:
+      'This book is an excellent treatise on culture and life when religion dictates laws of societies',
+  },
 ];
 
-export async function seed(knex: Knex): Promise<any> {
+export async function seed(knex: Knex): Promise<void> {
   await knex('users')
     .del()
     .then(() => {

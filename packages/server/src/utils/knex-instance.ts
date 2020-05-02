@@ -11,14 +11,17 @@ const wrapIdentifier = (value: string, originalImpl: Function): string => {
   );
 };
 
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const postProcessResponse = (result: any) => {
   if (Array.isArray(result)) {
     return result.map(row => camelizeKeys(row));
   }
   return camelizeKeys(result);
 };
+/* eslint-enable @typescript-eslint/explicit-function-return-type */
 
-const knexInstance = () =>
+const knexInstance = (): knex =>
   knex({
     client: 'pg',
     connection: process.env.POSTGRESQL_URL,

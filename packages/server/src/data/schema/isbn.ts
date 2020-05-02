@@ -6,7 +6,7 @@ import { ISBNBook } from '../../services/types';
 export const ISBNBookAPIType = objectType({
   name: 'ISBNAPIBook',
   description: 'Raw response from the ISBN Database API',
-  definition(t) {
+  definition(t): void {
     t.string('isbn', {
       description: 'A 10 digit ISBN',
     });

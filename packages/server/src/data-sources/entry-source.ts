@@ -31,14 +31,17 @@ class EntrySource {
     return this.ctx.knex<EntriesEntity>('entries').returning(this.entryReturn);
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private byIdLoader = new DataLoader<string, EntriesEntity>(ids => {
     return byColumnLoader(this.ctx, 'entries', 'id', ids);
   });
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private byBookIdLoader = new DataLoader<string, EntriesEntity[]>(ids => {
     return manyByColumnLoader(this.ctx, 'entries', 'userBookId', ids);
   });
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private byUserIdLoader = new DataLoader<string, EntriesEntity[]>(ids => {
     return manyByColumnLoader(this.ctx, 'entries', 'userId', ids);
   });

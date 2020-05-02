@@ -49,7 +49,7 @@ server.applyMiddleware({ app });
 
 const port = 3000;
 
-app.listen({ port }, () => {
+app.listen({ port }, (): void => {
   // eslint-disable-next-line no-console
   console.log(
     `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,
