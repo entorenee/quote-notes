@@ -16,7 +16,7 @@ interface BookBase {
   isbn10: String!
 
   """A new format 13 digit ISBN"""
-  isbn13: String!
+  isbn13: String
 
   """Title of the book"""
   title: String!
@@ -95,7 +95,7 @@ type ISBNDatabaseBook implements BookBase & Node {
   isbn10: String!
 
   """A new format 13 digit ISBN"""
-  isbn13: String!
+  isbn13: String
 
   """Title of the book"""
   title: String!
@@ -185,7 +185,7 @@ type UserBook implements BookBase & Node & Timestamps {
   isbn10: String!
 
   """A new format 13 digit ISBN"""
-  isbn13: String!
+  isbn13: String
 
   """A foreign key to the canonical ISBN Book"""
   isbnBookId: ID!
