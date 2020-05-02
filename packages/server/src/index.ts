@@ -3,23 +3,18 @@ import path from 'path';
 import { ApolloServer } from 'apollo-server-express';
 import { makeSchema } from '@nexus/schema';
 import dotenv from 'dotenv';
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request } from 'express';
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
-import mongoose from 'mongoose';
+
+import knex from './utils/knex-instance';
+import Context from './data-sources/context';
 
 import * as types from './data/schema';
-import Author from './data/models/author';
-import Book from './data/models/book';
-import Entry from './data/models/entry';
-import User from './data/models/user';
 
 dotenv.config();
 
-const { AUTH0_DOMAIN, DB_URL } = process.env;
-
-mongoose.set('useFindAndModify', false);
-mongoose.connect(DB_URL as string, { useNewUrlParser: true });
+const { AUTH0_DOMAIN } = process.env;
 
 const checkJwt = jwt({
   algorithms: ['RS256'],
@@ -33,24 +28,8 @@ const checkJwt = jwt({
   }),
 });
 
-const fetchUserId = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user || !req.user.sub) return next();
-
-  const user = await User.findOne({ sub: req.user.sub });
-
-  if (user) {
-    const { id } = user;
-    // eslint-disable-next-line require-atomic-updates
-    req.user = {
-      ...req.user,
-      id,
-    };
-  }
-  return next();
-};
-
 const app = express();
-app.use('*', checkJwt, fetchUserId);
+app.use('*', checkJwt);
 
 const schema = makeSchema({
   types,
@@ -62,23 +41,15 @@ const schema = makeSchema({
 
 const server = new ApolloServer({
   schema,
-  context: ({ req }: any) => {
-    return {
-      db: {
-        Author,
-        Book,
-        Entry,
-        User,
-      },
-      user: req.user,
-    };
+  context: ({ req }: { req: Request }): Context => {
+    return new Context(knex(), req.user && req.user.sub);
   },
 });
 server.applyMiddleware({ app });
 
 const port = 3000;
 
-app.listen({ port }, () => {
+app.listen({ port }, (): void => {
   // eslint-disable-next-line no-console
   console.log(
     `🚀 Server ready at http://localhost:${port}${server.graphqlPath}`,

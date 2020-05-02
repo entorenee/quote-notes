@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: "warn" */
 import {
   arg,
   mutationField,
@@ -7,39 +6,30 @@ import {
   queryField,
 } from '@nexus/schema';
 
-import { BookModel, EntryModel, NullableUser } from '../models/types';
-import { NodeType } from './shared';
+import { EntriesEntity, UsersEntity } from '../../generated/db-types';
+import { NodeType, Timestamps, UserJoinedBook } from './shared';
 
 export const User = objectType({
   name: 'User',
-  definition(t) {
-    t.implements(NodeType);
+  definition(t): void {
+    t.implements(NodeType, Timestamps);
     t.string('name', {
       description: `User's name from oAuth provider`,
       nullable: true,
     });
-    t.string('picture', {
-      description: `User's profile image from oAuth provider`,
-      nullable: true,
-    });
     t.string('sub', { description: 'Unique oAuth provider' });
     t.list.field('books', {
-      type: 'Book',
+      type: 'UserBook',
       description: `A user's collection of books to take notes on`,
-      // @ts-ignore
-      resolve({ books }, _, { db }): Promise<BookModel[]> {
-        return db.Book.find({
-          _id: { $in: books },
-        }).exec();
+      resolve({ id }, _, { book }): Promise<UserJoinedBook[]> {
+        return book.userBooks(id);
       },
     });
     t.list.field('entries', {
       type: 'Entry',
       description: `A user's stored entries`,
-      resolve({ id }, _, { db }): Promise<EntryModel[]> {
-        return db.Entry.find({
-          owner: id,
-        }).exec();
+      resolve({ id }, _, { entry }): Promise<EntriesEntity[]> {
+        return entry.byUserId(id);
       },
     });
   },
@@ -47,38 +37,27 @@ export const User = objectType({
 
 export const UserInput = inputObjectType({
   name: 'UserInput',
-  definition(t) {
+  definition(t): void {
     t.string('name');
     t.string('picture');
-    t.string('sub', { required: true });
+    t.string('sub');
   },
 });
 
 export const me = queryField('me', {
   type: User,
   nullable: true,
-  resolve(_, args, { db, user }): Promise<NullableUser> | null {
-    if (user) {
-      return db.User.findOne({ sub: user.sub }).exec();
-    }
-
-    return null;
+  resolve(_, args, { user }): Promise<UsersEntity | null> {
+    return user.currentUser();
   },
 });
 
 export const myBooks = queryField('myBooks', {
-  type: 'Book',
+  type: 'UserBook',
   list: true,
   nullable: true,
-  resolve: async (_, args, { db, user }): Promise<BookModel[] | null> => {
-    if (user) {
-      const data = await db.User.findById(user.id, 'books')
-        .populate('books')
-        .exec();
-      return data ? data.books : null;
-    }
-
-    return null;
+  resolve(_, args, { book }): Promise<UserJoinedBook[] | null> {
+    return book.currUserBooks();
   },
 });
 
@@ -88,14 +67,7 @@ export const updateUser = mutationField('updateUser', {
   args: {
     user: arg({ type: UserInput, required: true }),
   },
-  resolve: (_, { user }, { db }): Promise<NullableUser> | null => {
-    if (user) {
-      return db.User.findOneAndUpdate({ sub: user.sub }, user, {
-        upsert: true,
-        new: true,
-      }).exec();
-    }
-
-    return null;
+  resolve: (_, { user }, ctx): Promise<UsersEntity | null> => {
+    return ctx.user.updateUser(user);
   },
 });

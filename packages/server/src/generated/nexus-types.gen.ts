@@ -23,11 +23,12 @@ declare global {
 
 export interface NexusGenInputs {
   NewEntryInput: { // input type
-    book: string; // ID!
     chapter?: string | null; // String
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title: string; // String!
+    userBookId: string; // ID!
   }
   UpdateEntryInput: { // input type
     chapter?: string | null; // String
@@ -35,11 +36,12 @@ export interface NexusGenInputs {
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title?: string | null; // String
   }
   UserInput: { // input type
     name?: string | null; // String
     picture?: string | null; // String
-    sub: string; // String!
+    sub?: string | null; // String
   }
 }
 
@@ -51,13 +53,6 @@ export interface NexusGenRootTypes {
     id: string; // ID!
     name: string; // String!
   }
-  Book: { // root type
-    id: string; // ID!
-    isbn?: string | null; // String
-    publishedDate?: any | null; // DateTime
-    synopsis?: string | null; // String
-    title: string; // String!
-  }
   Entry: { // root type
     chapter?: string | null; // String
     createdAt: any; // DateTime!
@@ -65,8 +60,12 @@ export interface NexusGenRootTypes {
     notes?: string | null; // String
     page?: number | null; // Int
     quote?: string | null; // String
+    title: string; // String!
+    updatedAt: any; // DateTime!
+    userBookId: string; // ID!
+    userId: string; // ID!
   }
-  ISBNBook: { // root type
+  ISBNAPIBook: { // root type
     authors?: string[] | null; // [String!]
     date_published: string; // String!
     dewey_decimal?: string | null; // String
@@ -76,7 +75,7 @@ export interface NexusGenRootTypes {
     format?: string | null; // String
     image?: string | null; // String
     isbn: string; // String!
-    isbn13: string; // String!
+    isbn13?: string | null; // String
     langage?: string | null; // String
     msrp?: number | null; // Int
     overview?: string | null; // String
@@ -88,15 +87,35 @@ export interface NexusGenRootTypes {
     title: string; // String!
     title_long?: string | null; // String
   }
+  ISBNDatabaseBook: { // root type
+    id: string; // ID!
+    isbn10: string; // String!
+    isbn13: string; // String!
+    title: string; // String!
+  }
   Mutation: {};
   Query: {};
   User: { // root type
+    createdAt: any; // DateTime!
     id: string; // ID!
     name?: string | null; // String
-    picture?: string | null; // String
     sub: string; // String!
+    updatedAt: any; // DateTime!
   }
-  Node: NexusGenRootTypes['Author'] | NexusGenRootTypes['Book'] | NexusGenRootTypes['Entry'] | NexusGenRootTypes['User'];
+  UserBook: { // root type
+    createdAt: any; // DateTime!
+    id: string; // ID!
+    isbn10: string; // String!
+    isbn13: string; // String!
+    isbnBookId: string; // ID!
+    rating?: number | null; // Int
+    synopsis?: string | null; // String
+    title: string; // String!
+    updatedAt: any; // DateTime!
+  }
+  BookBase: NexusGenRootTypes['ISBNDatabaseBook'] | NexusGenRootTypes['UserBook'];
+  Node: NexusGenRootTypes['Author'] | NexusGenRootTypes['ISBNDatabaseBook'] | NexusGenRootTypes['Entry'] | NexusGenRootTypes['UserBook'] | NexusGenRootTypes['User'];
+  Timestamps: NexusGenRootTypes['Entry'] | NexusGenRootTypes['UserBook'] | NexusGenRootTypes['User'];
   String: string;
   Int: number;
   Float: number;
@@ -113,21 +132,12 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 
 export interface NexusGenFieldTypes {
   Author: { // field return type
-    booksWritten: NexusGenRootTypes['Book'][]; // [Book!]!
+    booksWritten: NexusGenRootTypes['ISBNDatabaseBook'][]; // [ISBNDatabaseBook!]!
     id: string; // ID!
     name: string; // String!
   }
-  Book: { // field return type
-    authors: NexusGenRootTypes['Author'][]; // [Author!]!
-    entries: NexusGenRootTypes['Entry'][]; // [Entry!]!
-    id: string; // ID!
-    isbn: string | null; // String
-    publishedDate: any | null; // DateTime
-    synopsis: string | null; // String
-    title: string; // String!
-  }
   Entry: { // field return type
-    book: NexusGenRootTypes['Book'] | null; // Book
+    book: NexusGenRootTypes['UserBook'] | null; // UserBook
     chapter: string | null; // String
     createdAt: any; // DateTime!
     id: string; // ID!
@@ -135,8 +145,12 @@ export interface NexusGenFieldTypes {
     owner: NexusGenRootTypes['User'] | null; // User
     page: number | null; // Int
     quote: string | null; // String
+    title: string; // String!
+    updatedAt: any; // DateTime!
+    userBookId: string; // ID!
+    userId: string; // ID!
   }
-  ISBNBook: { // field return type
+  ISBNAPIBook: { // field return type
     authors: string[] | null; // [String!]
     date_published: string; // String!
     dewey_decimal: string | null; // String
@@ -146,7 +160,7 @@ export interface NexusGenFieldTypes {
     format: string | null; // String
     image: string | null; // String
     isbn: string; // String!
-    isbn13: string; // String!
+    isbn13: string | null; // String
     langage: string | null; // String
     msrp: number | null; // Int
     overview: string | null; // String
@@ -158,36 +172,64 @@ export interface NexusGenFieldTypes {
     title: string; // String!
     title_long: string | null; // String
   }
+  ISBNDatabaseBook: { // field return type
+    id: string; // ID!
+    isbn10: string; // String!
+    isbn13: string; // String!
+    title: string; // String!
+  }
   Mutation: { // field return type
-    addToMyBooks: NexusGenRootTypes['Book'] | null; // Book
-    createEntry: NexusGenRootTypes['Entry'] | null; // Entry
-    removeEntry: string | null; // ID
-    removeMyBook: NexusGenRootTypes['User'] | null; // User
-    updateEntry: NexusGenRootTypes['Entry'] | null; // Entry
+    addToMyBooks: NexusGenRootTypes['UserBook']; // UserBook!
+    createEntry: NexusGenRootTypes['Entry']; // Entry!
+    removeEntry: string; // ID!
+    removeMyBook: string; // ID!
+    updateEntry: NexusGenRootTypes['Entry']; // Entry!
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
     allAuthors: NexusGenRootTypes['Author'][] | null; // [Author!]
-    allBooks: NexusGenRootTypes['Book'][] | null; // [Book!]
     author: NexusGenRootTypes['Author'] | null; // Author
-    book: NexusGenRootTypes['Book'] | null; // Book
     entry: NexusGenRootTypes['Entry'] | null; // Entry
-    isbnAuthor: NexusGenRootTypes['ISBNBook'][]; // [ISBNBook!]!
-    isbnBooks: NexusGenRootTypes['ISBNBook'][]; // [ISBNBook!]!
+    isbnAuthor: NexusGenRootTypes['ISBNAPIBook'][]; // [ISBNAPIBook!]!
+    isbnBooks: NexusGenRootTypes['ISBNAPIBook'][]; // [ISBNAPIBook!]!
     me: NexusGenRootTypes['User'] | null; // User
-    myBooks: NexusGenRootTypes['Book'][] | null; // [Book!]
+    myBooks: NexusGenRootTypes['UserBook'][] | null; // [UserBook!]
     myEntries: NexusGenRootTypes['Entry'][] | null; // [Entry!]
+    userBook: NexusGenRootTypes['UserBook'] | null; // UserBook
   }
   User: { // field return type
-    books: NexusGenRootTypes['Book'][]; // [Book!]!
+    books: NexusGenRootTypes['UserBook'][]; // [UserBook!]!
+    createdAt: any; // DateTime!
     entries: NexusGenRootTypes['Entry'][]; // [Entry!]!
     id: string; // ID!
     name: string | null; // String
-    picture: string | null; // String
     sub: string; // String!
+    updatedAt: any; // DateTime!
+  }
+  UserBook: { // field return type
+    authors: NexusGenRootTypes['Author'][]; // [Author!]!
+    createdAt: any; // DateTime!
+    entries: NexusGenRootTypes['Entry'][]; // [Entry!]!
+    id: string; // ID!
+    isbn10: string; // String!
+    isbn13: string; // String!
+    isbnBookId: string; // ID!
+    rating: number | null; // Int
+    synopsis: string | null; // String
+    title: string; // String!
+    updatedAt: any; // DateTime!
+  }
+  BookBase: { // field return type
+    isbn10: string; // String!
+    isbn13: string; // String!
+    title: string; // String!
   }
   Node: { // field return type
     id: string; // ID!
+  }
+  Timestamps: { // field return type
+    createdAt: any; // DateTime!
+    updatedAt: any; // DateTime!
   }
 }
 
@@ -216,9 +258,6 @@ export interface NexusGenArgTypes {
     author: { // args
       id: string; // String!
     }
-    book: { // args
-      id: string; // String!
-    }
     entry: { // args
       id: string; // ID!
     }
@@ -228,22 +267,27 @@ export interface NexusGenArgTypes {
     isbnBooks: { // args
       name: string; // String!
     }
+    userBook: { // args
+      id: string; // String!
+    }
   }
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
-  Node: "Author" | "Book" | "Entry" | "User"
+  BookBase: "ISBNDatabaseBook" | "UserBook"
+  Node: "Author" | "ISBNDatabaseBook" | "Entry" | "UserBook" | "User"
+  Timestamps: "Entry" | "UserBook" | "User"
 }
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Author" | "Book" | "Entry" | "ISBNBook" | "Mutation" | "Query" | "User";
+export type NexusGenObjectNames = "Author" | "Entry" | "ISBNAPIBook" | "ISBNDatabaseBook" | "Mutation" | "Query" | "User" | "UserBook";
 
 export type NexusGenInputNames = "NewEntryInput" | "UpdateEntryInput" | "UserInput";
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = "Node";
+export type NexusGenInterfaceNames = "BookBase" | "Node" | "Timestamps";
 
 export type NexusGenScalarNames = "Boolean" | "DateTime" | "Float" | "ID" | "Int" | "String";
 
