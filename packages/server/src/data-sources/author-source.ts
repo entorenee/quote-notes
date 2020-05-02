@@ -14,7 +14,7 @@ class AuthorSource {
 
   private authorIdsLoader = new DataLoader<string, BooksAuthorsEntity[]>(
     ids => {
-      return manyByColumnLoader(this.ctx, 'booksAuthors', 'authorId', ids);
+      return manyByColumnLoader(this.ctx, 'booksAuthors', 'bookId', ids);
     },
   );
 

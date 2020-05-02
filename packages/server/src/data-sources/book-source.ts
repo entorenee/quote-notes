@@ -11,6 +11,7 @@ import {
 } from '../generated/db-types';
 import {
   byColumnLoader,
+  orderLoaderResponse,
   orderManyLoaderResponse,
   manyByColumnLoader,
 } from '../utils/loader-utils';
@@ -43,23 +44,22 @@ class BookSource {
   private userBooksQuery(
     key: 'userId' | 'id',
     values: readonly string[],
-  ): Promise<UserJoinedBook[][]> {
+  ): Promise<UserJoinedBook[]> {
     return this.ctx.knex
       .from('userBooks')
       .join('isbnBooks', 'userBooks.isbnBookId', '=', 'isbnBooks.id')
-      .whereIn(key, uniq(values))
+      .whereIn(`userBooks.${key}`, uniq(values))
       .select(
         'userBooks.*',
         'isbnBooks.title',
         'isbnBooks.isbn10',
         'isbnBooks.isbn13',
-      )
-      .then(books => orderManyLoaderResponse(key, values, books));
+      );
   }
 
   // Used to get book ids from an author
   private bookIdsLoader = new DataLoader<string, BooksAuthorsEntity[]>(ids => {
-    return manyByColumnLoader(this.ctx, 'booksAuthors', 'bookId', ids);
+    return manyByColumnLoader(this.ctx, 'booksAuthors', 'authorId', ids);
   });
 
   private isbnBookByIdLoader = new DataLoader<string, IsbnBooksEntity>(ids => {
@@ -71,15 +71,21 @@ class BookSource {
     return result.map(({ bookId }) => bookId);
   }
 
-  private userBooksByBookIdLoader = new DataLoader<string, UserJoinedBook[]>(
+  private userBooksByBookIdLoader = new DataLoader<string, UserJoinedBook>(
     ids => {
-      return this.userBooksQuery('id', ids);
+      const key = 'id';
+      return this.userBooksQuery(key, ids).then(books =>
+        orderLoaderResponse('userBooks', key, ids, books),
+      );
     },
   );
 
   private userBooksByUserIdLoader = new DataLoader<string, UserJoinedBook[]>(
     ids => {
-      return this.userBooksQuery('userId', ids);
+      const key = 'userId';
+      return this.userBooksQuery(key, ids).then(books =>
+        orderManyLoaderResponse(key, ids, books),
+      );
     },
   );
 
@@ -138,20 +144,18 @@ class BookSource {
           ),
         );
 
-        const allAuthorIds = authorRecords
+        const bookAuthorEntries = authorRecords
           .map(({ id }): AuthorsEntity['id'] => id)
-          .concat(newAuthorIds);
-        await Promise.all(
-          allAuthorIds.map(
-            (authorId): QueryBuilder =>
-              trx<BooksAuthorsEntity>('booksAuthors').insert({
-                authorId,
-                bookId: isbnRecord.id,
-              }),
-          ),
-        );
+          .concat(...newAuthorIds)
+          .map(authorId => ({
+            authorId,
+            // @ts-ignore
+            bookId: isbnRecord[0].id,
+          }));
+        await trx<BooksAuthorsEntity>('booksAuthors').insert(bookAuthorEntries);
 
-        return isbnRecord;
+        // @ts-ignore
+        return isbnRecord[0];
       });
     } catch (e) {
       return Promise.reject(e);
@@ -168,7 +172,7 @@ class BookSource {
     return userId ? this.userBooks(userId) : Promise.resolve(null);
   }
 
-  public userBookById(id: string): Promise<UserJoinedBook[]> {
+  public userBookById(id: string): Promise<UserJoinedBook> {
     return this.userBooksByBookIdLoader.load(id);
   }
 
@@ -193,7 +197,7 @@ class BookSource {
     let [isbnBook] = await this.ctx
       .knex<IsbnBooksEntity>('isbnBooks')
       .select('*')
-      .where('isbn', isbn)
+      .where('isbn10', isbn)
       .orWhere('isbn13', isbn);
 
     if (!isbnBook) {

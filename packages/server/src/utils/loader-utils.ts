@@ -5,6 +5,20 @@ import { QueryBuilder } from 'knex';
 import Context from '../data-sources/context';
 import { DbTables } from '../generated/db-types';
 
+export const orderLoaderResponse = <Data>(
+  table: string,
+  key: string,
+  keys: readonly (string | number)[],
+  rows: Data[],
+): (Data | Error)[] => {
+  const normalized: Dictionary<Data> = keyBy(rows, key);
+  return keys.map(
+    keyVal =>
+      normalized[keyVal] ||
+      new Error(`Missing row data for ${table}:${key} ${keyVal}`),
+  );
+};
+
 export const orderManyLoaderResponse = <Data>(
   key: string,
   keys: readonly (string | number)[],
@@ -28,14 +42,7 @@ export const byColumnLoader = <
     .select('*')
     .from(table)
     .whereIn(key, values)
-    .then(rows => {
-      const normalized: Dictionary<DbTables[Tbl]> = keyBy(rows, key);
-      return values.map(
-        keyVal =>
-          normalized[keyVal] ||
-          new Error(`Missing row data for ${table}:${key} ${keyVal}`),
-      );
-    });
+    .then(rows => orderLoaderResponse(table, key, values, rows));
 };
 
 export function manyByColumnLoader<
