@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon",
-    "type-check": "tsc -w",
+    "build": "tsc",
+    "type-check": "tsc -w --noEmit",
     "gen-table-types": "ts-node scripts/gen-table-types.ts"
   },
   "dependencies": {
