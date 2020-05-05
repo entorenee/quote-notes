@@ -4,11 +4,12 @@ const isBrowser = typeof window !== 'undefined'
 
 const auth0 = isBrowser
   ? new auth0js.WebAuth({
+      audience: process.env.AUTH0_AUDIENCE,
       domain: process.env.AUTH0_DOMAIN,
       clientID: process.env.AUTH0_CLIENTID,
-      redirectUri: process.env.AUTH0_AUDIENCE,
+      redirectUri: process.env.AUTH0_CALLBACK,
       responseType: 'token id_token',
-      scope: 'openid profile',
+      scope: 'openid profile user:entries user:books',
     })
   : {}
 

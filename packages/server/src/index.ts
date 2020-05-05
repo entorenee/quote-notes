@@ -14,11 +14,11 @@ import * as types from './data/schema';
 
 dotenv.config();
 
-const { AUTH0_DOMAIN } = process.env;
+const { AUTH0_AUDIENCE, AUTH0_DOMAIN } = process.env;
 
 const checkJwt = jwt({
   algorithms: ['RS256'],
-  credentialsRequired: false,
+  audience: AUTH0_AUDIENCE,
   issuer: `https://${AUTH0_DOMAIN}/`,
   secret: jwksRsa.expressJwtSecret({
     cache: true,
