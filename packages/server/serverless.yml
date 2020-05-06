@@ -1,0 +1,31 @@
+service: quote-notes-graphql
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    packager: 'yarn'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 15
+
+functions:
+  customAuthorizer:
+    handler: 'src/gateway-authorizer.authenticate'
+    memorySize: 128
+    environment:
+      TOKEN_AUDIENCE: 'https://www.remark-books/com/api'
+      TOKEN_ISSUER: 'https://dslemay-dev.auth0.com/'
+      JWKS_URI: 'https://dslemay-dev.auth0.com/.well-known/jwks.json'
+  testEndpoint:
+    handler: 'src/test.handler'
+    events:
+      - http:
+          method: get
+          path: '/test'
+          authorizer: customAuthorizer
