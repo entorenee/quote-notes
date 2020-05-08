@@ -19,8 +19,9 @@ const schema = makeSchema({
 
 const server = new ApolloServer({
   schema,
-  context: ({ event }): Context => {
-    return new Context(knex(), event.requestContext?.authorizer?.claims.sub);
+  context: async ({ event }): Promise<Context> => {
+    const db = await knex();
+    return new Context(db, event.requestContext?.authorizer?.claims.sub);
   },
 });
 

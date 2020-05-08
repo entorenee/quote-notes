@@ -42,6 +42,7 @@ const schema = makeSchema({
 const server = new ApolloServer({
   schema,
   context: ({ req }: { req: Request }): Context => {
+    // @ts-ignore
     return new Context(knex(), req.user && req.user.sub);
   },
 });
