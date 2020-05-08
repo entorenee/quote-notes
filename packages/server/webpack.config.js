@@ -12,7 +12,7 @@ module.exports = {
     filename: '[name].js',
     path: path.join(__dirname, '.webpack'),
   },
-  externals: [nodeExternals(), 'knex', 'pg'],
+  externals: [nodeExternals(), 'knex'],
   target: 'node',
   resolve: {
     extensions: ['.js', '.mjs', '.cjs', '.json', '.ts'],

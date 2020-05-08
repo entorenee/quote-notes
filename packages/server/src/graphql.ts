@@ -21,8 +21,13 @@ const server = new ApolloServer({
   schema,
   context: async ({ event }): Promise<Context> => {
     const db = await knex();
-    return new Context(db, event.requestContext?.authorizer?.claims.sub);
+    return new Context(db, event.requestContext.authorizer.principalId);
   },
 });
 
-export const handler = server.createHandler();
+export const handler = server.createHandler({
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});

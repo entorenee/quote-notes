@@ -9,7 +9,9 @@
     "build": "tsc",
     "type-check": "tsc -w --noEmit",
     "gen-table-types": "ts-node scripts/gen-table-types.ts",
-    "offline": "serverless offline --kms-id dda360c5-f13b-4333-826d-3880c17cf724"
+    "offline": "serverless offline --kms-id dda360c5-f13b-4333-826d-3880c17cf724",
+    "package": "serverless package --kms-id dda360c5-f13b-4333-826d-3880c17cf724",
+    "deploy": "serverless deploy --kms-id dda360c5-f13b-4333-826d-3880c17cf724"
   },
   "dependencies": {
     "@nexus/schema": "^0.13.1",

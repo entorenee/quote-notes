@@ -9,6 +9,11 @@ custom:
   webpack:
     webpackConfig: 'webpack.config.js'
     packager: 'yarn'
+    includeModules:
+      forceInclude:
+        - pg
+      forceExclude:
+        - aws-sdk
   serverless-offline-ssm-provider:
     file: .ssm
   kmsId: ${opt:kms-id}
@@ -39,27 +44,30 @@ functions:
           method: post
           path: '/graphql'
           authorizer: customAuthorizer
+          cors: true
       - http:
           method: get
           path: '/graphql'
           authorizer: customAuthorizer
+          cors: true
 
-  resources:
-    Resources:
-      graphqlApiRole:
-        Type: AWS::IAM::Role
-        Properties:
-          RoleName: GraphQLApiRole
-          AssumeRolePolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Principal:
-                  Service:
-                    -lambda.amazonaws.com
-                Action: sts:AssumeRole
-          Policies:
-            - PolicyName: kmsDecrypt
+resources:
+  Resources:
+    graphqlApiRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: GraphQLApiRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: kmsDecrypt
+            PolicyDocument:
               Version: '2012-10-17'
               Statement:
                 - Effect: Allow
