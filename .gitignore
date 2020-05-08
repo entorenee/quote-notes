@@ -14,3 +14,4 @@ packages/client/lib
 # Serverless
 .serverless
 .webpack
+.ssm

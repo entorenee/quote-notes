@@ -8,7 +8,8 @@
     "start": "nodemon",
     "build": "tsc",
     "type-check": "tsc -w --noEmit",
-    "gen-table-types": "ts-node scripts/gen-table-types.ts"
+    "gen-table-types": "ts-node scripts/gen-table-types.ts",
+    "offline": "serverless offline --printOutput --kms-id dda360c5-f13b-4333-826d-3880c17cf724"
   },
   "dependencies": {
     "@nexus/schema": "^0.13.1",
@@ -38,9 +39,12 @@
     "@types/lodash": "^4.14.150",
     "@types/node-fetch": "^2.5.7",
     "@types/prettier": "^2.0.0",
+    "aws-sdk": "^2.672.0",
     "serverless-offline": "^6.1.5",
+    "serverless-offline-ssm-provider": "^2.0.1",
     "serverless-webpack": "^5.3.2",
     "ts-loader": "^7.0.2",
-    "ts-node": "^8.9.1"
+    "ts-node": "^8.9.1",
+    "webpack-node-externals": "^1.7.2"
   }
 }
