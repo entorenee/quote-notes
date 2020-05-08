@@ -2,6 +2,7 @@
 const path = require('path');
 
 const slsw = require('serverless-webpack');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
@@ -11,7 +12,7 @@ module.exports = {
     filename: '[name].js',
     path: path.join(__dirname, '.webpack'),
   },
-  externals: ['knex', 'pg'],
+  externals: [nodeExternals(), 'knex', 'pg'],
   target: 'node',
   resolve: {
     extensions: ['.js', '.mjs', '.cjs', '.json', '.ts'],
