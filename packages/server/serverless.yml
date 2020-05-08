@@ -27,13 +27,6 @@ functions:
       TOKEN_AUDIENCE: 'https://www.remark-books/com/api'
       TOKEN_ISSUER: 'https://dslemay-dev.auth0.com/'
       JWKS_URI: 'https://dslemay-dev.auth0.com/.well-known/jwks.json'
-  testEndpoint:
-    handler: 'src/test.handler'
-    events:
-      - http:
-          method: get
-          path: '/test'
-          authorizer: customAuthorizer
   graphql:
     handler: 'src/graphql.handler'
     role: graphqlApiRole
