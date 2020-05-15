@@ -1,4 +1,5 @@
 import path from 'path';
+import KnexDb from 'knex';
 
 import { ApolloServer } from 'apollo-server-lambda';
 import { makeSchema } from '@nexus/schema';
@@ -17,10 +18,15 @@ const schema = makeSchema({
   },
 });
 
+let db: KnexDb;
+
 const server = new ApolloServer({
   schema,
   context: async ({ event }): Promise<Context> => {
-    const db = await knex();
+    if (!db) {
+      // eslint-disable-next-line require-atomic-updates
+      db = await knex()
+    }
     return new Context(db, event.requestContext.authorizer.principalId);
   },
 });
