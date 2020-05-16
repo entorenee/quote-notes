@@ -1,4 +1,6 @@
-import { keyBy, groupBy, Dictionary, uniq } from 'lodash';
+import keyBy from 'lodash/keyBy';
+import groupBy from 'lodash/groupBy';
+import uniq from 'lodash/uniq';
 
 // eslint-disable-next-line import/no-cycle
 import Context from '../data-sources/context';
@@ -10,7 +12,7 @@ export const orderLoaderResponse = <Data>(
   keys: readonly (string | number)[],
   rows: Data[],
 ): (Data | Error)[] => {
-  const normalized: Dictionary<Data> = keyBy(rows, key);
+  const normalized: Record<string, Data> = keyBy(rows, key);
   return keys.map(
     (keyVal): Data | Error =>
       normalized[keyVal] ||

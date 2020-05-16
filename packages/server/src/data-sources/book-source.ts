@@ -1,7 +1,8 @@
 /* eslint-disable import/no-cycle */
 import DataLoader from 'dataloader';
 import { QueryBuilder } from 'knex';
-import { keyBy, uniq } from 'lodash';
+import keyBy from 'lodash/keyBy';
+import uniq from 'lodash/uniq';
 
 import {
   AuthorsEntity,
