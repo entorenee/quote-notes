@@ -3,16 +3,22 @@ const path = require('path');
 
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
+// Package is installed via serverless-webpack
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { NormalModuleReplacementPlugin } = require('webpack');
+
+const { isLocal } = slsw.lib.webpack;
 
 module.exports = {
-  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  mode: isLocal ? 'development' : 'production',
+  devtool: isLocal ? 'eval' : 'source-map',
   entry: slsw.lib.entries,
   output: {
-    libraryTarget: 'commonjs',
+    libraryTarget: 'commonjs2',
     filename: '[name].js',
     path: path.join(__dirname, '.webpack'),
   },
-  externals: [nodeExternals(), 'knex'],
+  externals: [nodeExternals(), 'aws-sdk', 'prettier'],
   target: 'node',
   resolve: {
     extensions: ['.js', '.mjs', '.cjs', '.json', '.ts'],
@@ -36,4 +42,11 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    // Ignore knex dynamic required dialects that we don't use
+    new NormalModuleReplacementPlugin(
+      /m[sy]sql2?|oracle(db)?|sqlite3|pg-(native|query)/,
+      'noop2',
+    ),
+  ],
 };
