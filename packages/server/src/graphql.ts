@@ -1,4 +1,5 @@
 import path from 'path';
+
 import KnexDb from 'knex';
 
 import { ApolloServer } from 'apollo-server-lambda';

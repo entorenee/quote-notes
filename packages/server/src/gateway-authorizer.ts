@@ -3,7 +3,26 @@ import util from 'util';
 import jwt from 'jsonwebtoken';
 import jwksRsa from 'jwks-rsa';
 
-const getPolicyDocument = (Effect: string, Resource: string) => {
+type PolicyEffect = 'Allow' | 'Deny'
+
+interface PolicyDocument {
+  Version: string
+  Statement: {
+    Action: string
+    Effect: PolicyEffect
+    Resource: string
+  }[]
+}
+
+interface AuthenticatedResponse {
+  principalId: string;
+  policyDocument: PolicyDocument;
+  context: {
+    scope: string;
+  };
+}
+
+const getPolicyDocument = (Effect: PolicyEffect, Resource: string): PolicyDocument => {
   const policyDocument = {
     Version: '2012-10-17',
     Statement: [
@@ -24,7 +43,7 @@ interface Params {
 }
 
 // extract and return the Bearer Token from the Lambda event parameters
-const getToken = (params: Params) => {
+const getToken = (params: Params): string => {
   if (!params.type || params.type !== 'TOKEN') {
     throw new Error('Expected "event.type" parameter to have value "TOKEN"');
   }
@@ -48,8 +67,12 @@ const jwtOptions = {
   issuer: process.env.TOKEN_ISSUER,
 };
 
-// @ts-ignore
-export const authenticate = (params) => {
+export const authenticate = (params: Params): Promise<AuthenticatedResponse> => {
+  const { JWKS_URI } = process.env;
+  if (!JWKS_URI) {
+    throw new Error('You must supply a JWKS_URI environment variable')
+  }
+
   const token = getToken(params);
   const decoded = jwt.decode(token, { complete: true });
   if (typeof decoded !== 'object' || !decoded?.header?.kid) {
@@ -59,26 +82,28 @@ export const authenticate = (params) => {
   const client = jwksRsa({
     cache: true,
     jwksRequestsPerMinute: 5,
-    // @ts-ignore
-    jwksUri: process.env.JWKS_URI,
+    jwksUri: JWKS_URI,
     rateLimit: true,
   });
 
+  /* eslint-disable @typescript-eslint/ban-ts-ignore */
   const getSigningKey = util.promisify(client.getSigningKey);
   return (
     getSigningKey(decoded.header.kid)
-      // @ts-ignore
       .then((key) => {
+        // @ts-ignore
         const signingKey = key.publicKey || key.rsaPublicKey;
         return jwt.verify(token, signingKey, jwtOptions);
       })
-      // @ts-ignore
-      .then((verified) => ({
+      .then((verified): AuthenticatedResponse => ({
+        // @ts-ignore
         principalId: verified.sub,
         policyDocument: getPolicyDocument('Allow', params.methodArn),
         context: {
+          // @ts-ignore
           scope: verified.scope,
         },
       }))
   );
+  /* eslint-enable @typescript-eslint/ban-ts-ignore */
 };
