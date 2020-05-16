@@ -1,6 +1,8 @@
 import knex from 'knex';
 import { camelizeKeys, decamelize } from 'humps';
 
+import decrypt from './decrpyt';
+
 const identifierCache: Record<string, string> = {};
 
 const wrapIdentifier = (value: string, originalImpl: Function): string => {
@@ -21,12 +23,28 @@ const postProcessResponse = (result: any) => {
 };
 /* eslint-enable @typescript-eslint/explicit-function-return-type */
 
-const knexInstance = (): knex =>
-  knex({
+let connectionUrl: string;
+
+const knexInstance = async (): Promise<knex> => {
+  const { DB_URL, KMS_ID } = process.env;
+  if (!DB_URL) {
+    return Promise.reject(new Error('Missing environment variable DB_URL'));
+  }
+  if (!KMS_ID) {
+    return Promise.reject(new Error('Missing environment variable KMS_ID'));
+  }
+
+  if (!connectionUrl) {
+    /* eslint-disable require-atomic-updates */
+    connectionUrl = await decrypt(KMS_ID, DB_URL);
+  }
+
+  return knex({
     client: 'pg',
-    connection: process.env.DB_URL,
+    connection: connectionUrl,
     wrapIdentifier,
     postProcessResponse,
   });
+};
 
 export default knexInstance;

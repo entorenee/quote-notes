@@ -1,0 +1,36 @@
+service: quote-notes-rds
+
+provider:
+  name: aws
+  region: ${opt:region, 'us-west-2'}
+  stage: ${opt:stage, 'dev'}
+
+resources:
+  Description: RDS database instance and corresponding Security Groups for this application
+  Resources:
+    DBEC2SecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: 'Security Group for Postgres'
+        GroupName: 'postgres-rds-sg'
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 5432
+            ToPort: 5432
+            CidrIp: 0.0.0.0/0
+    MasterDB:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        AllocatedStorage: 20
+        AutoMinorVersionUpgrade: true
+        BackupRetentionPeriod: 7
+        DBInstanceClass: db.t2.micro
+        DBInstanceIdentifier: quote-notes-${self:provider.stage}
+        DBName: quotes
+        VPCSecurityGroups:
+          - Fn::GetAtt: [DBEC2SecurityGroup, GroupId]
+        Engine: postgres
+        EngineVersion: 11.5
+        MasterUsername: ${opt:username}
+        MasterUserPassword: ${opt:password}
+        PubliclyAccessible: true

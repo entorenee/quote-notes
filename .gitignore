@@ -10,3 +10,8 @@ packages/client/lib
 *.bs.js
 .merlin
 .bsb.lock
+
+# Serverless
+.serverless
+.webpack
+.ssm

@@ -1,0 +1,81 @@
+service: quote-notes-graphql
+
+plugins:
+  - serverless-webpack
+  - serverless-offline-ssm-provider
+  - serverless-offline
+
+custom:
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    packager: 'yarn'
+  serverless-offline-ssm-provider:
+    file: .ssm
+  kmsId: ${opt:kms-id}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 15
+  region: ${opt:region, 'us-west-2'}
+
+functions:
+  customAuthorizer:
+    handler: 'src/gateway-authorizer.authenticate'
+    memorySize: 128
+    environment:
+      TOKEN_AUDIENCE: 'https://www.remark-books/com/api'
+      TOKEN_ISSUER: 'https://dslemay-dev.auth0.com/'
+      JWKS_URI: 'https://dslemay-dev.auth0.com/.well-known/jwks.json'
+  graphql:
+    handler: 'src/graphql.handler'
+    role: graphqlApiRole
+    environment:
+      DB_URL: ${ssm:/dev/remark/db_url}
+      ISBN_AUTH: ${ssm:/prod/remark/isbn_api_key}
+      KMS_ID: ${self:custom.kmsId}
+    events:
+      - http:
+          method: post
+          path: '/graphql'
+          authorizer: customAuthorizer
+          cors: true
+      - http:
+          method: get
+          path: '/graphql'
+          authorizer: customAuthorizer
+          cors: true
+
+resources:
+  Resources:
+    graphqlApiRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: GraphQLApiRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        Policies:
+          - PolicyName: kmsDecrypt
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - kms:Decrypt
+                  Resource:
+                    - 'Fn::Join':
+                      - ':'
+                      - - 'arn'
+                        - Ref: AWS::Partition
+                        - 'kms'
+                        - Ref: AWS::Region
+                        - Ref: AWS::AccountId
+                        - key/${self:custom.kmsId}
