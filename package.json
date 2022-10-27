@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
-  "repository": "git@github.com:dslemay/quote-notes.git",
-  "author": "Daniel Lemay <26767995+dslemay@users.noreply.github.com>",
+  "repository": "git@github.com:entorenee/quote-notes.git",
   "license": "MIT",
   "workspaces": [
     "packages/*"
