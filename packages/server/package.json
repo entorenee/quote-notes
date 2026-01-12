@@ -34,7 +34,7 @@
     "@types/jsonwebtoken": "^8.3.9",
     "@types/lodash": "^4.14.150",
     "@types/node-fetch": "^2.5.7",
-    "aws-sdk": "^2.672.0",
+    "aws-sdk": "^2.1693.0",
     "noop2": "^2.0.0",
     "serverless-offline": "^6.1.5",
     "serverless-offline-ssm-provider": "^2.0.1",
